@@ -1,14 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { View, Text } from "react-native";
+import { useState } from "react";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { BottomTab } from "./src/navigation/BottomTap";
 
 export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <BottomTab/>
+    </NavigationContainer>
   );
 }
+};
 
 const styles = StyleSheet.create({
   container: {
