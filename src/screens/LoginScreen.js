@@ -1,6 +1,6 @@
 import {
     View, Text, Image, 
-    Pressable, StyleSheet,TouchableOpacity
+    StyleSheet,TouchableOpacity
 } from 'react-native';
 import React from 'react';
 
