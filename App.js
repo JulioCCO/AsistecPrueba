@@ -1,17 +1,15 @@
-
-import { StyleSheet, View, Text } from 'react-native';
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { BottomTab } from "./src/navigation/BottomTap";
-import StackNavigator from './StackNavigator';
-
+import { DataProvider } from "./src/context/DataProvider";
+import InitApp from "./InitApp";
 
 const App = () => {
+
+
   return (
-    <NavigationContainer>
-      <StackNavigator/>
-    </NavigationContainer>
-  )
-}
+    <DataProvider>
+    <InitApp/>
+    </DataProvider>
+  );
+};
 
 export default App;
