@@ -1,13 +1,15 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import EventosScreen from "../screens/EventosScreen";
-import HorarioScreen from "../screens/HorarioScreen";
+import EventosScreen from "../../screens/EventosScreen";
+import HorarioScreen from "../../screens/HorarioScreen";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import NotificationScreen from "../screens/NotificacionScreen";
+import NotificationScreen from "../../screens/NotificacionScreen";
 const Tab = createBottomTabNavigator();
 
 export const BottomTab = () => {
   return (
+
+   
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -30,5 +32,6 @@ export const BottomTab = () => {
       <Tab.Screen name="Horario" component={HorarioScreen} />
       <Tab.Screen name="Notificaciones" component={NotificationScreen} />
     </Tab.Navigator>
+  
   );
 };
