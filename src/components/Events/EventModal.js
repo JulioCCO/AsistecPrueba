@@ -15,7 +15,6 @@ import moment from "moment";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useEffect } from "react";
 import { idGenerator } from "../../helpers/IdGenerator";
-import { set } from "date-fns";
 
 const WIDTH = Dimensions.get("window").width - 70;
 const HEIGHT = Dimensions.get("window").height - 160;
@@ -41,6 +40,8 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
 
   //Edited Name
   const  [editedName, setEditedName] = useState("");
+
+
   
 
   //-------------------------------Functions---------------------------------
@@ -71,6 +72,9 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
     changeModalVisible();
   };
 
+
+
+
   //----------------------------Edit Verification------------------------------
   useEffect (() => {
     if(selectedEvent !== null){
@@ -87,16 +91,40 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
       setEditedName(selectedEvent.name);
     }
   },[]);
+  //-------------------------------Switcher----------------------------------
+  useEffect(() => {
+    // Esta función se ejecutará cada vez que isAllDay cambie de valor
+    if (isAllDay) {
+      setInitialHourText("12:01 am");
+      setFinalHourText("11:59 pm");
+      const defaultInitialHour = new Date();
+      defaultInitialHour.setHours(0, 1, 0, 0);
+
+      const defaultFinalHour = new Date();
+      defaultFinalHour.setHours(23, 59, 0, 0);
+
+      setInitialHour(defaultInitialHour);
+      setFinalHour(defaultFinalHour);
+      
+    }
+  }, [isAllDay]); 
+
 
   const handleOnCreateEvent = () => {
     //Validar que todos los campos esten completos
     if (
-      title &&
+      (title &&
       description &&
       initialHourText !== "Seleccionar hora" &&
       finalHourText !== "Seleccionar hora" &&
-      selectedReminder 
+      selectedReminder) || isAllDay
+
     ) {
+
+      //imprimir hora inicial y final
+      console.log("Hora inicial: " + initialHourText);
+      console.log("Hora final: " + finalHourText);
+      //Validar que la hora inicial sea menor a la hora final
         if(new Date(initialHour).getTime() < new Date(finalHour).getTime()){
     
           const newEvent = {
@@ -271,6 +299,7 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
             }}
           />
 
+          {!isAllDay && (
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <View style={{ flex: 1 }}>
               <Text
@@ -342,6 +371,7 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
               )}
             </View>
           </View>
+          )}
           <View style={{ flexDirection: "row", marginTop: 30 }}>
             <View style={{ flex: 1 }}>
               <View style={{ flexDirection: "row" }}>
