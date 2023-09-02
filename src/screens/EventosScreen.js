@@ -8,9 +8,6 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import EventModal from "../components/Events/EventModal";
 import EventCalendar from "../components/Events/EventCalendar";
 import moment from "moment";
-
-import useData from "../hooks/useData";
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotification from "../components/Notification/PushNotification";
 import { useEffect } from "react";

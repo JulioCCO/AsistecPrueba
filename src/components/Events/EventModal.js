@@ -15,7 +15,6 @@ import moment from "moment";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useEffect } from "react";
 import { idGenerator } from "../../helpers/IdGenerator";
-import { set } from "date-fns";
 
 const WIDTH = Dimensions.get("window").width - 70;
 const HEIGHT = Dimensions.get("window").height - 160;
