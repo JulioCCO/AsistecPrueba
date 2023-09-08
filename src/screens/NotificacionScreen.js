@@ -1,79 +1,75 @@
+import React from "react";
+
 import { 
     View, 
     Text, 
     FlatList, 
     TouchableOpacity ,
     StyleSheet
-} from 'react-native';
-import React, { useEffect } from 'react';
+} from "react-native";
+import { ProgressBar } from "react-native-paper";
 
-import moment from 'moment';
-import { ProgressBar } from 'react-native-paper';
+import moment from "moment";
 
-import { calculatePercentage } from '../helpers/CalculatePercentage';
-import useData from '../hooks/useData';
+import { calculatePercentage } from "../helpers/CalculatePercentage";
+import useData from "../hooks/useData";
 
 
 const NotificationScreen = () => {
     
     const { notifications } = useData();
 
-    useEffect(()=> {
-        console.log(notifications);
-    }, [notifications])
-
     return (
         <View style={{backgroundColor: "#FFFFFF", height: "100%"}}>
-
             <FlatList
                 data={notifications}
                 renderItem={({ item }) => {
-                    // Calculate the percentage of the day that has elapsed since the start of the event
-                    const {percentage, color, notification} = calculatePercentage(item["date"]);
-                    
-                    return <View style={styles.listContainer}>
+                
+                // Calculate the percentage of the day that has elapsed since the start of the event
+                const {percentage, color} = calculatePercentage(item["date"]);
+                
+                return <View style={styles.listContainer}>
+                    <View>
+                        {/* Display the abbreviated weekday name in Spanish */}
+                        <Text style={styles.dayText}>
+                            {moment(item.date).format("ddd")}
+                        </Text>
 
-                        <View>
-                            {/* Display the abbreviated weekday name in Spanish */}
-                            <Text style={styles.dayText}>
-                                {moment(item.date).format('ddd')}
+                        {/* Display the day of the month */}
+                        <View style={styles.dayNumber}>
+                            <Text style={{
+                                textAlign: "center",
+                                fontSize: 20,
+                                color: "white"
+                            }}>
+                                {moment(item.date).date()}
                             </Text>
-
-                            {/* Display the day of the month */}
-                            <View style={styles.dayNumber}>
-                                <Text style={{
-                                    textAlign: "center",
-                                    fontSize: 20,
-                                    color: "white"
-                                }}>
-                                    {moment(item.date).date()}
-                                </Text>
-                            </View>
                         </View>
+                    </View>
 
-                        <View style={styles.NotificationContainer}>
-                            <TouchableOpacity 
-                                key={item["id"]}
-                                style={{
-                                    marginVertical: 5,
-                                    width: "70%"
-                                }}
-                            >
-                                {/* Display a progress bar showing the percentage of the day that has elapsed */}
-                                <ProgressBar 
-                                    progress={percentage} 
-                                    color={color}
-                                    style={styles.progressBar}
-                                />
+                    <View style={styles.NotificationContainer}>
+                        <TouchableOpacity 
+                            key={item["id"]}
+                            style={{
+                                marginVertical: 5,
+                                width: "70%"
+                            }}
+                        >
+                            {/* Display a progress bar showing the percentage of the day that has elapsed */}
+                            <ProgressBar 
+                                progress={percentage} 
+                                color={color}
+                                style={styles.progressBar}
+                            />
 
-                                {/* Display the name of the event */}
-                                <Text style={{fontSize: 15, marginBottom: 5}}>{item["name"]}</Text>
+                            {/* Display the name of the event */}
+                            <Text style={{fontSize: 15, marginBottom: 5}}>{item["name"]}</Text>
 
-                                <Text style={{fontSize: 12, color: "#5B83B0"}}>Ver mas</Text>
+                            <Text style={{fontSize: 12, color: "#5B83B0"}}>Ver mas</Text>
 
-                            </TouchableOpacity>
-                            
-                        </View>
+                        </TouchableOpacity>
+                        
+                    </View>
                         
                 </View>
                 }}
@@ -83,9 +79,10 @@ const NotificationScreen = () => {
     );
 }
 
+// These are all the styles of this screen
 const styles = StyleSheet.create({
     listContainer: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: "#FFFFFF",
         padding: 10,
         marginVertical: 5,
         borderRadius: 5,

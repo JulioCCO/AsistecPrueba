@@ -1,48 +1,36 @@
-import moment from "moment";
 import { useState, useEffect, createContext } from "react";
+
+import moment from "moment";
+
 import { calculateTimingNotification } from "../helpers/calculateTimingNotification";
 import { formatTime } from "../helpers/formatTime";
 
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
-    
-
     const [eventItems, setEventItems] = useState({"init": "init"});
     const [listaComponents, setListaComponents] = useState([]);
     const [notifications, setNotifications] = useState([]);
 
-    // Para el adecuado funcionamiento de los componentes, se debe tener un id unico para cada uno de ellos
-    // Para ello, se debe tener un contador que se incremente cada vez que se cree un componente
+    // For the proper functioning of the components, you must have a unique id for each one of them.
+    // To do this, you must have a counter that is incremented each time a component is created.
 
-    const [ultimoId, setUltimoId] = useState(0); // Ultimo id de la lista de componentes
-    const [ultimoIdRelacion, setUltimoIdRelacion] = useState(0); // Ultimo id de la lista de componentes
+    const [ultimoId, setUltimoId] = useState(0); // Last id of the components list
+    const [ultimoIdRelacion, setUltimoIdRelacion] = useState(0); // Last id of the components list
 
     const getNotifications = () => {
         try {
             let currentDate = moment().toISOString();
     
+            // Get events keys and create new object
             const events = Object.entries(eventItems)?.map(([date, events]) => ({
                 date,
                 events
-            }));
-
-            // const currentNotifications = events?.flatMap(event =>
-            //     {
-            //         if(event["events"] !== "init") {
-            //             return event["events"].filter(finalEvent => {
-            //                 let date = new Date(finalEvent["initialHour"]);
-            //                 date = calculateTimingNotification(date, finalEvent["reminderText"]);
-            //                 date = new Date(date);
-            //                 currentDate = new Date(currentDate);
-            //                 return date.getTime() === currentDate.getTime() || date.getTime() < currentDate.getTime();
-            //             });
-            //         }
-            //     }
-            // );              
+            }));           
 
             const currentNotifications = events?.flatMap(event =>
                 {
+                    // Because when events is created, it has "init": "init"
                     if(event["events"] !== "init") {
                         return event["events"].filter(finalEvent => {
                             const hour = formatTime(finalEvent).trim();
@@ -79,10 +67,7 @@ const DataProvider = ({ children }) => {
         getNotifications();
     }, [eventItems]);
 
-
-
     return (
-
         <DataContext.Provider value={{ 
             eventItems, 
             setEventItems, 
@@ -98,7 +83,7 @@ const DataProvider = ({ children }) => {
         </DataContext.Provider>
     );
 
-};
+}
 
 export { DataProvider };
 export default DataContext;

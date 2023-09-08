@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, Text } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import { TouchableOpacity, View } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import EventListItem from "./EventListItem";
 
 const Agenda = ({
@@ -25,11 +27,11 @@ const Agenda = ({
             <TouchableOpacity
                 key={item["id"]}
                 onLongPress={() => handleLongPress(item)}
-                onPress={() => {
-                setIsDeleting(false);
-                setUnselectedEvent(false);
-                setItemInfo(item);
-                setSelectedDayEvents(item["date"]);
+                onPress={ () => {
+                    setIsDeleting(false);
+                    setUnselectedEvent(false);
+                    setItemInfo(item);
+                    setSelectedDayEvents(item["date"]);
                 }}
             >
                 
@@ -56,7 +58,6 @@ const Agenda = ({
                             <EventListItem 
                                 item={item} />
                         )
-                    
                 }
             </TouchableOpacity>
         </>
