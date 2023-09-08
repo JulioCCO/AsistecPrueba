@@ -1,21 +1,23 @@
 import React, { useState } from "react";
+
+import { FlatList, View, Text, StyleSheet } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
-import moment from 'moment';
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+
+import moment from "moment";
+
 import EventItem from "./EventItem";
+
 import Agenda from "./Agenda";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { da } from "date-fns/locale";
 
-LocaleConfig.locales['es'] = {
-  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-  monthNamesShort: ['Ene.', 'Feb.', 'Mar', 'Abr', 'May.', 'Jun', 'Jul.', 'Ago', 'Sept.', 'Oct.', 'Nov.', 'Dic.'],
-  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-  dayNamesShort: ['Dom.', 'Lun.', 'Mar.', 'Mié.', 'Jue.', 'Vie.', 'Sáb.'],
-  today: 'Hoy'
+// Setting up the calendar in Spanish
+LocaleConfig.locales["es"] = {
+  monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+  monthNamesShort: ["Ene.", "Feb.", "Mar", "Abr", "May.", "Jun", "Jul.", "Ago", "Sept.", "Oct.", "Nov.", "Dic."],
+  dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+  dayNamesShort: ["Dom.", "Lun.", "Mar.", "Mié.", "Jue.", "Vie.", "Sáb."],
+  today: "Hoy"
 };
-
-LocaleConfig.defaultLocale = 'es';
+LocaleConfig.defaultLocale = "es";
 
 const EventCalendar = ({
   daySelected, setDaySelected, eventCalendarItems,
@@ -69,7 +71,7 @@ const EventCalendar = ({
               }
             }
           }
-          obj[moment().format('YYYY-MM-DD')] = {
+          obj[moment().format("YYYY-MM-DD")] = {
             customStyles: {
               container: {
                 backgroundColor: "#8FC1A9",
@@ -98,7 +100,7 @@ const EventCalendar = ({
                 <View style={{ paddingTop: 12 }}>
                   {/* Display the abbreviated weekday name in Spanish */}
                   <Text style={styles.dayText}>
-                    {moment(daySelected).format('ddd')}
+                    {moment(daySelected).format("ddd")}
                   </Text>
 
                   {/* Display the day of the month */}
@@ -161,7 +163,7 @@ const EventCalendar = ({
 
 const styles = StyleSheet.create({
   listContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,

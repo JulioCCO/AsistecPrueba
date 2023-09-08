@@ -1,15 +1,16 @@
+import React from "react";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import EventosScreen from "../../screens/EventosScreen";
 import HorarioScreen from "../../screens/HorarioScreen";
-import React from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import NotificationScreen from "../../screens/NotificacionScreen";
+
 const Tab = createBottomTabNavigator();
 
 export const BottomTab = () => {
   return (
-
-   
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {

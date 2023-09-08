@@ -4,7 +4,6 @@ import {
     View, Text, Image, 
     StyleSheet,TouchableOpacity
 } from "react-native";
-
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
@@ -21,7 +20,16 @@ const LoginScreen= () => {
             />
 
             {/* This view contains all inputs */}
-            <View style={{width: "80%"}}>
+            <View style={{width: "80%", marginTop: "20%"}}>
+                <Input
+                    type="text"
+                    inputContainerStyle={{borderBottomWidth:0}} 
+                    placeholder="Tu nombre" 
+                    placeholderTextColor={"#00000066"}
+                    leftIcon={<Icon name="perm-identity" type="material" color="#769ECB" />}
+                    style={styles.inputs} 
+                />
+
                 <Input
                     type="email"
                     inputContainerStyle={{borderBottomWidth:0}} 
@@ -43,22 +51,22 @@ const LoginScreen= () => {
             </View>
 
             <TouchableOpacity 
-                // Navigate to Home screen when login button is pressed
-                onPress={() => navigation.navigate("Home")} 
+                // Navigate to CreateAccountScreen screen when login button is pressed
+                onPress={() => navigation.navigate("CreateAccountScreen")} 
                 style={styles.loginButton}>
                 <Text 
                     style={styles.loginButtonText}>
-                    Iniciar Sesión
+                    Crear Cuenta
                 </Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-                // Navigate to CreateAccountScreen screen when login button is pressed
-                onPress={() => navigation.navigate("CreateAccountScreen")}>
+                // Navigate to Login screen when login button is pressed
+                onPress={() => navigation.navigate("Login")}>
                 <Text 
                     style={styles.createAccountButton}>
-                    ¿Todavía no tienes una cuenta? {""}
-                    <Text style={{color: "black"}}>Registrate</Text>
+                    ¿Ya tienes una cuenta? {""}
+                    <Text style={{color: "black"}}>Inicia sesión</Text>
                 </Text>
             </TouchableOpacity>
         </View>

@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   Text,
   View,
@@ -7,20 +7,21 @@ import {
   Dimensions,
   TextInput,
   Switch,
+  StyleSheet
 } from "react-native";
 import { Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import moment from "moment";
 import { SelectList } from "react-native-dropdown-select-list";
-import { useEffect } from "react";
+
+import moment from "moment";
+
 import { idGenerator } from "../../helpers/IdGenerator";
 
 const WIDTH = Dimensions.get("window").width - 70;
 const HEIGHT = Dimensions.get("window").height - 160;
 
 const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalVisible, selectedEvent }) => {
-  //---------------------------------States---------------------------------
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   //TimePicker
@@ -38,13 +39,8 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
   const [modalTitle, setModalTitle] = useState("Crear evento");
   const [buttonText, setButtonText] = useState("Crear");
 
-  //Edited Name
   const  [editedName, setEditedName] = useState("");
 
-
-  
-
-  //-------------------------------Functions---------------------------------
   const onInitialHourChange = (event, selectedHour) => {
     setShowInitialHour(false);
     const currentHour = selectedHour || initialHour;
@@ -72,10 +68,6 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
     changeModalVisible();
   };
 
-
-
-
-  //----------------------------Edit Verification------------------------------
   useEffect (() => {
     if(selectedEvent !== null){
       setTitle(selectedEvent.name);
@@ -91,9 +83,9 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
       setEditedName(selectedEvent.name);
     }
   },[]);
-  //-------------------------------Switcher----------------------------------
+
+  
   useEffect(() => {
-    // Esta función se ejecutará cada vez que isAllDay cambie de valor
     if (isAllDay) {
       setInitialHourText("12:01 am");
       setFinalHourText("11:59 pm");
@@ -111,7 +103,7 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
 
 
   const handleOnCreateEvent = () => {
-    //Validar que todos los campos esten completos
+    // Validate that all fields are complete
     if (
       (title &&
       description &&
@@ -120,53 +112,48 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
       selectedReminder) || isAllDay
 
     ) {
+      // Validate that the start time is less than the end time.
+      if(new Date(initialHour).getTime() < new Date(finalHour).getTime()){
+        const newEvent = {
+          [daySelected] : [
+            {
+              name: title,
+              id: idGenerator(),
+              description: description,
+              initialHour: initialHour,
+              finalHour: finalHour,
+              initialHourText: initialHourText,
+              finalHourText: finalHourText,
+              reminder: selectedReminder,
+              reminderText: reminderValues[selectedReminder - 1].value,
+              isAllDay: isAllDay,
+              date: daySelected,
+            },
+          ],
+        };
 
-      //imprimir hora inicial y final
-      console.log("Hora inicial: " + initialHourText);
-      console.log("Hora final: " + finalHourText);
-      //Validar que la hora inicial sea menor a la hora final
-        if(new Date(initialHour).getTime() < new Date(finalHour).getTime()){
-    
-          const newEvent = {
-            [daySelected] : [
-              {
-                name: title,
-                id: idGenerator(),
-                description: description,
-                initialHour: initialHour,
-                finalHour: finalHour,
-                initialHourText: initialHourText,
-                finalHourText: finalHourText,
-                reminder: selectedReminder,
-                reminderText: reminderValues[selectedReminder - 1].value,
-                isAllDay: isAllDay,
-                date: daySelected,
-              },
-            ],
-          };
-
-          // Resetear los valores
-          setTitle("");
-          setDescription("");
-          closeModal();
-          setFinalHourText("Seleccionar hora");
-          setInitialHourText("Seleccionar hora");
-          setSelectedReminder(3);
-          setIsAllDay(false);
-          setInitialHour(new Date());
-          setFinalHour(new Date());
-          onEventCreated(newEvent, editedName); 
-          setEditedName("");
-          changeModalVisible();
-        } else {
-          alert("La hora de inicio debe ser menor a la hora final");
-        }
+        // Reset values
+        setTitle("");
+        setDescription("");
+        closeModal();
+        setFinalHourText("Seleccionar hora");
+        setInitialHourText("Seleccionar hora");
+        setSelectedReminder(3);
+        setIsAllDay(false);
+        setInitialHour(new Date());
+        setFinalHour(new Date());
+        onEventCreated(newEvent, editedName); 
+        setEditedName("");
+        changeModalVisible();
+      } else {
+        alert("La hora de inicio debe ser menor a la hora final");
+      }
     } else {
       alert("Por favor, complete todos los campos");
     }
   };
 
-  //ReminderValues
+  // ReminderValues
   const reminderValues = [
     { key: 1, value: "5 minutos antes" },
     { key: 2, value: "30 minutos antes" },
@@ -177,78 +164,20 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
   return (
     <TouchableOpacity
       disabled={true}
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: isModalVisible ? "rgba(0,0,0,0.4)" : "transparent", // Cambia el fondo a oscuro cuando el modal está abierto
-      }}
+      style={[styles.container, {backgroundColor: isModalVisible ? "rgba(0,0,0,0.4)" : "transparent"}]}
     >
-
-      <View
-        style={{
-          height: HEIGHT,
-          width: WIDTH,
-          paddingTop: 0,
-          backgroundColor: "white",
-          borderRadius: 24,
-        }}
-      >
-        <View
-          style={{
-            alignItems: "flex-start",
-            padding: 10,
-            backgroundColor: "#8FC1A9",
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 24,
-            position: "relative",
-          }}
-        >
+      <View style={styles.generalView}>
+        <View style={styles.topModal}>
           <TouchableOpacity
             onPress={closeModal}
-            style={{
-              position: "absolute",
-              top: 5,
-              right: 10,
-            }}
+            style={styles.closeModalBtn}
           >
             <Icon name="close" size={30} color="white" style={{}} />
           </TouchableOpacity>
 
-          <Text
-            style={{
-              margin: 5,
-              fontSize: 12,
-              fontWeight: "bold",
-              opacity: 0.4,
-            }}
-          >
-            {daySelected}
-          </Text>
-
-          <Text
-            style={{
-              margin: 5,
-              marginStart: 9,
-              fontSize: 26,
-              fontWeight: "bold",
-              color: "white",
-            }}
-          >
-            {modalTitle}
-          </Text>
-
-          <Text
-            style={{
-              margin: 5,
-              marginStart: 9,
-              fontSize: 12,
-              fontWeight: "bold",
-              opacity: 0.4,
-            }}
-          >
-            Titulo
-          </Text>
+          <Text style={styles.daySelected}>{daySelected}</Text>
+          <Text style={styles.modalTitle}>{modalTitle}</Text>
+          <Text style={styles.title}>Titulo</Text>
 
           <Input
             value={title}
@@ -257,70 +186,29 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
             placeholder="Titulo del Evento"
             placeholderTextColor={"white"}
             inputContainerStyle={{ borderBottomWidth: 0 }}
-            style={{
-              color: "white",
-              borderBottomWidth: 2,
-              borderBottomColor: "#00000066",
-            }}
+            style={styles.userEventTitleText}
           />
         </View>
 
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "column",
-            padding: 15,
-            flex: 1,
-          }}
-        >
-          <Text
-            style={{
-              margin: 5,
-              fontSize: 12,
-              fontWeight: "bold",
-              opacity: 0.4,
-            }}
-          >
-            Descripcion
-          </Text>
+        <View style={styles.bodyView}>
+          <Text style={styles.description}>Descripción</Text>
 
           <TextInput
             multiline
             numberOfLines={4}
             onChangeText={setDescription}
             value={description}
-            style={{
-              borderWidth: 1,
-              borderColor: "#00000066",
-              borderRadius: 5,
-              margin: 5,
-              padding: 8,
-              textAlignVertical: "top",
-            }}
+            style={styles.userDescriptionText}
           />
 
           {!isAllDay && (
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  margin: 5,
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  opacity: 0.4,
-                }}
-              >
-                Inicio
-              </Text>
+              <Text style={styles.init}>Inicio</Text>
 
               <TouchableOpacity
                 onPress={showInitialDatepicker}
-                style={{
-                  width: "90%",
-                  borderBottomWidth: 1,
-                  borderColor: "#00000066",
-                  marginLeft: 5,
-                }}
+                style={styles.hourText}
               >
                 <Text style={{ fontSize: 16 }}>{initialHourText}</Text>
               </TouchableOpacity>
@@ -337,25 +225,11 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
             </View>
 
             <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  margin: 5,
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  opacity: 0.4,
-                }}
-              >
-                Fin
-              </Text>
+              <Text style={styles.end}>Fin</Text>
 
               <TouchableOpacity
                 onPress={showFinalDatepicker}
-                style={{
-                  width: "90%",
-                  borderBottomWidth: 1,
-                  borderColor: "#00000066",
-                  marginLeft: 5,
-                }}
+                style={styles.hourText}
               >
                 <Text style={{ fontSize: 16 }}>{finalHourText}</Text>
               </TouchableOpacity>
@@ -372,6 +246,7 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
             </View>
           </View>
           )}
+
           <View style={{ flexDirection: "row", marginTop: 30 }}>
             <View style={{ flex: 1 }}>
               <View style={{ flexDirection: "row" }}>
@@ -413,32 +288,136 @@ const  EventModal = ({ changeModalVisible, daySelected, onEventCreated, isModalV
 
           <TouchableOpacity
             onPress={handleOnCreateEvent}
-            style={{
-              backgroundColor: "#8FC1A9",
-              margin: 5,
-              padding: 15,
-              borderRadius: 20,
-              width: "40%",
-              alignItems: "center",
-              position: "absolute",
-              bottom: 15,
-              right: 15,
-            }}
+            style={styles.createEventBtn}
           >
-            <Text
-              style={{
-                color: "white",
-                fontSize: 22,
-                fontWeight: "bold",
-              }}
-            >
-              {buttonText}
-            </Text>
+            <Text style={styles.btnText}>{buttonText}</Text>
           </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  generalView: {
+    height: HEIGHT,
+    width: WIDTH,
+    paddingTop: 0,
+    backgroundColor: "white",
+    borderRadius: 24,
+  },
+
+  topModal: {
+    alignItems: "flex-start",
+    padding: 10,
+    backgroundColor: "#8FC1A9",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    position: "relative"
+  },
+
+  closeModalBtn: {
+    position: "absolute",
+    top: 5,
+    right: 10,
+  },
+
+  daySelected: {
+    margin: 5,
+    fontSize: 12,
+    fontWeight: "bold",
+    opacity: 0.4,
+  },
+
+  modalTitle: {
+    margin: 5,
+    marginStart: 9,
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "white"
+  },
+
+  title: {
+    margin: 5,
+    marginStart: 9,
+    fontSize: 12,
+    fontWeight: "bold",
+    opacity: 0.4,
+  },
+
+  userEventTitleText: {
+    color: "white",
+    borderBottomWidth: 2,
+    borderBottomColor: "#00000066"
+  },
+
+  bodyView: {
+    width: "100%",
+    flexDirection: "column",
+    padding: 15,
+    flex: 1,
+  },
+
+  description: {
+    margin: 5,
+    fontSize: 12,
+    fontWeight: "bold",
+    opacity: 0.4,
+  },
+
+  userDescriptionText: {
+    borderWidth: 1,
+    borderColor: "#00000066",
+    borderRadius: 5,
+    margin: 5,
+    padding: 8,
+    textAlignVertical: "top"
+  },
+
+  init: {
+    margin: 5,
+    fontSize: 12,
+    fontWeight: "bold",
+    opacity: 0.4,
+  },
+
+  hourText: {
+    width: "90%",
+    borderBottomWidth: 1,
+    borderColor: "#00000066",
+    marginLeft: 5,
+  },
+
+  end: {
+    margin: 5,
+    fontSize: 12,
+    fontWeight: "bold",
+    opacity: 0.4,
+  },
+
+  createEventBtn: {
+    backgroundColor: "#8FC1A9",
+    margin: 5,
+    padding: 15,
+    borderRadius: 20,
+    width: "40%",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 15,
+    right: 15,
+  },
+
+  btnText: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  }
+})
 
 export default EventModal;
