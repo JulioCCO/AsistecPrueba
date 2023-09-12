@@ -1,8 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import moment from "moment";
 import { addDays, format } from "date-fns";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const obtenerFechas = (startDate, lastDate, horaInicio, horaFin, Days) => {
+const getDates = (startDate, lastDate, horaInicio, horaFin, Days) => {
   var ListaFechas = []; // Array para almacenar la lista fechas
 
   var fechaActual = startDate; // Fecha actual
@@ -206,7 +207,7 @@ const HandlerActivity = ({
   color
 }) => {
   // Variables para obtener las fechas
-  ListaFechas = obtenerFechas(
+  ListaFechas = getDates(
     initialDate,
     finalDate,
     initialHour,

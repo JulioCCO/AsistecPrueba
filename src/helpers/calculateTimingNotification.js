@@ -14,6 +14,6 @@ export const calculateTimingNotification = (date, timing) => {
     case "1 semana antes":
       return notificationDate.subtract(1, "weeks");
     default:
-      return notificationDate; // No se especificó un timing válido, devuelve la fecha original
+      return notificationDate; // No valid timing specified, returns original date
   }
 };

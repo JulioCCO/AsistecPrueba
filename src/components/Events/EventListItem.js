@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+
 import { 
   View, 
-  Text
+  Text,
+  StyleSheet
 } from "react-native";
-import { ProgressBar } from 'react-native-paper';
-import { calculatePercentage } from '../../helpers/CalculatePercentage';
+import { ProgressBar } from "react-native-paper";
+
+import { calculatePercentage } from "../../helpers/CalculatePercentage";
     
 const EventListItem = ({item}) => {
     const [progress, setProgress] = useState(0);
@@ -21,16 +24,7 @@ const EventListItem = ({item}) => {
     }, [])
 
     return (
-        <View style={{ 
-            backgroundColor: "#FAF3DD", 
-            padding: 20, 
-            margin: 10,
-            borderRadius: 10, 
-            flexDirection: "row", 
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 5
-        }}>
+        <View style={styles.container}>
             <View style={{
                 flex: 1,
                 gap: 10
@@ -44,6 +38,7 @@ const EventListItem = ({item}) => {
                     }} />
                 <Text style={{fontSize: 15}}>{item.name}</Text>
             </View>
+            
             <Text style={{
                 flex: 1, 
                 textAlign: "center",
@@ -54,4 +49,18 @@ const EventListItem = ({item}) => {
         </View>
     )
 };
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "#FAF3DD", 
+        padding: 20, 
+        margin: 10,
+        borderRadius: 10, 
+        flexDirection: "row", 
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 5
+    }
+})
+
 export default EventListItem;

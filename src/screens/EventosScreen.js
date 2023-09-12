@@ -1,29 +1,24 @@
+import React, { useState, useEffect } from "react";
+
 import {
   View,
   TouchableOpacity,
-  Modal,
+  Modal, StyleSheet
 } from "react-native";
-import React, { useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import EventModal from "../components/Events/EventModal";
-import EventCalendar from "../components/Events/EventCalendar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import moment from "moment";
 
-import useData from "../hooks/useData";
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import EventModal from "../components/Events/EventModal";
+import EventCalendar from "../components/Events/EventCalendar";
 import PushNotification from "../components/Notification/PushNotification";
-import { useEffect } from "react";
 
 const EventosScreen = () => {
   const [daySelected, setDaySelected] = useState(moment().format("YYYY-MM-DD"));
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [itemInfo, setItemInfo] = useState({});
-  
-  // const {eventItems, setEventItems} = useData();
   const [eventItems, setEventItems] = useState({"init": "init"});
-  // const {getNotifications} = useData();
-
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [newEvent, setNewEvent] = useState({});
@@ -34,51 +29,50 @@ const EventosScreen = () => {
     }
   }, [showNotification]);
 
+  const changeModalVisible = () => {
+    if(isModalVisible) {
+      setSelectedEvent(null);
+    }
+    setIsModalVisible(!isModalVisible);
+  }
+
   const handleEventCreated = (event, oldName) => {
     const eventDate = Object.keys(event)[0];
     const eventsDates = Object.keys(eventItems);
 
+    /* This is because eventItems has "init": "init" 
+    when it's created to avoid visual bug
+    */
     if(eventItems["init"]) {
       delete eventItems["init"]
     }
 
-    // Si ya hay un evento en la fecha seleccionada, se agrega el nuevo evento
+    // If there is already an event on the selected date, the new event is added.
     if(eventsDates.includes(eventDate) && selectedEvent === null) {
       setEventItems({...eventItems, [eventDate] : [...eventItems[eventDate], event[eventDate][0]]});
-      // Se guarda el evento en el AsyncStorage
+      // Event is saved in the AsyncStorage
       AsyncStorage.setItem("storedEvents", JSON.stringify({...eventItems, [eventDate] : [...eventItems[eventDate], event[eventDate][0]]}));
       setNewEvent(event[eventDate][0]);
       setShowNotification(true);
     }
 
-    // Si ya hay un evento en la fecha seleccionada y se esta editando, se actualiza el evento
+    // If there is already an event on the selected date and it is being edited, the event is updated.
     else if(eventsDates.includes(eventDate) && selectedEvent !== null) {
-
-      
-
-      // Se actualiza el evento
+      // The event is updated
       const newEventItems = eventItems[eventDate].map((item) => {
-        // Si el nombre del evento es igual al nombre del evento seleccionado, se actualiza el evento esto en caso de que se haya cambiado el nombre
+        /* If the name of the event is equal to the name of the selected event, 
+        the event is updated if the name has been changed. */
 
-        //se verifica si se cambio el nombre
-        if(oldName !== "") {
-
-          if(item.name === oldName) {
-
-            return event[eventDate][0];
-          }
-    
-        } else{
-
-        if(item.name === selectedEvent.name) {
-
-          return event[eventDate][0];
-        }
+        // Check if the name has been changed
+        if(oldName !== "" && item.name === oldName) return event[eventDate][0];
+        else {
+          if(item.name === selectedEvent.name) return event[eventDate][0];
         }
         return item;
       });
+
       setEventItems({...eventItems, [eventDate] : newEventItems});
-      // Se guarda el evento en el AsyncStorage
+      // Event is saved in the AsyncStorage
       AsyncStorage.setItem("storedEvents", JSON.stringify({...eventItems, [eventDate] : newEventItems}));
       setNewEvent(event[eventDate][0]);
       setShowNotification(true);
@@ -86,21 +80,12 @@ const EventosScreen = () => {
 
     } else {
       setEventItems({...eventItems, [eventDate] : event[eventDate]});
-      // Se guarda el evento en el AsyncStorage
+      // Event is saved in the AsyncStorage
       AsyncStorage.setItem("storedEvents", JSON.stringify({...eventItems, [eventDate] : event[eventDate]}));
       setNewEvent(event[eventDate][0]);
       setShowNotification(true);
     }
   }
-
-  const changeModalVisible = () => {
-
-    if(isModalVisible) {
-      setSelectedEvent(null);
-    }
-    setIsModalVisible(!isModalVisible);
-  
-  };
 
   const onDelete = (item) => {
     const itemToDelete = eventItems[item["date"]];
@@ -112,25 +97,19 @@ const EventosScreen = () => {
 
       if(Object.keys(eventItems).length === 0) {
         setEventItems({"init": "init"});
-        // Se guarda el evento en el AsyncStorage
+        // Event is saved in the AsyncStorage
         AsyncStorage.setItem("storedEvents", JSON.stringify({"init": "init"}));
       }
     } else {
       setEventItems({...eventItems, [item["date"]]: newItemsArray})
-      // Se guarda el evento en el AsyncStorage
+      // Event is saved in the AsyncStorage
       AsyncStorage.setItem("storedEvents", JSON.stringify({...eventItems, [item["date"]]: newItemsArray}));
     }
-    // getNotifications();
   }
-
 
   return (
     <View
-      style={{
-        position: "relative",
-        flex: 1,
-        backgroundColor: "#FFFFFF"
-      }}
+      style={styles.container}
     >
       {
         showNotification ? (
@@ -138,6 +117,7 @@ const EventosScreen = () => {
         ) : null
       }
 
+      {/* Item that shows a calendar and allows to select a day */}
       <EventCalendar
         daySelected={daySelected}
         setDaySelected={setDaySelected}
@@ -149,23 +129,15 @@ const EventosScreen = () => {
         onDelete={onDelete}
       />
 
+      {/* Button to create new event (Icon at bottom right) */}
       <TouchableOpacity
         onPress={changeModalVisible}
-        style={{
-          position: "absolute",
-          backgroundColor: "#5B83B0",
-          borderRadius: 30,
-          width: 50,
-          height: 50,
-          justifyContent: "center",
-          alignItems: "center",
-          bottom: 15,
-          right: 15,
-        }}
+        style={styles.createEvent}
       >
         <Icon name="plus" type="font-awesome" color="#ffffff" size={24} />
       </TouchableOpacity>
 
+      {/* Modal that allows to inserting data to create a new event */}
       <Modal
         transparent={true}
         animationType="fade"
@@ -184,5 +156,26 @@ const EventosScreen = () => {
     </View>
   );
 };
+
+// These are all the styles of this screen
+const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    flex: 1,
+    backgroundColor: "#FFFFFF"
+  },
+
+  createEvent: {
+    position: "absolute",
+    backgroundColor: "#5B83B0",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 15,
+    right: 15,
+  }
+});
 
 export default EventosScreen;
