@@ -7,12 +7,12 @@ import EventListItem from "./EventListItem";
 
 const Agenda = ({
     item, isDeleting, setIsDeleting, setUnselectedEvent, 
-    setSelectedDayEvents, itemInfo, setItemInfo, onDelete}) => {
+    setSelectedDayEvents, itemInfo, setItemInfo, handleDeleteEvent}) => {
     
     const [selectedEventName, setSelectedEventName] = useState("");
 
     const handleDelete = (item) => {
-        onDelete(item);
+        handleDeleteEvent(item);
         setIsDeleting(false);
     }
 
