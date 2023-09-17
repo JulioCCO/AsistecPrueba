@@ -6,21 +6,15 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import EventListItem from "./EventListItem";
 
 const Agenda = ({
-  item,
-  isDeleting,
-  setIsDeleting,
-  setUnselectedEvent,
-  setSelectedDayEvents,
-  itemInfo,
-  setItemInfo,
-  onDelete,
-}) => {
-  const [selectedEventName, setSelectedEventName] = useState("");
+    item, isDeleting, setIsDeleting, setUnselectedEvent, 
+    setSelectedDayEvents, itemInfo, setItemInfo, handleDeleteEvent}) => {
+    
+    const [selectedEventName, setSelectedEventName] = useState("");
 
-  const handleDelete = (item) => {
-    onDelete(item);
-    setIsDeleting(false);
-  };
+    const handleDelete = (item) => {
+        handleDeleteEvent(item);
+        setIsDeleting(false);
+    }
 
   const handleLongPress = (item) => {
     setIsDeleting(true);

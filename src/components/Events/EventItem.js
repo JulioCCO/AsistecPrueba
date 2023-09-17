@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from "react";
+import React, { useMemo} from "react";
 
 import { 
     View, 
@@ -25,35 +25,18 @@ const spanishWeekDays = {
 }
       
 const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelectedEvent}) => {
-    const [progress, setProgress] = useState(0);
-    const [color, setColor] = useState("#64B149");
-    const [itemName, setItemName] = useState(itemInfo.name);
-    const [itemDescription, setItemDescription] = useState(itemInfo.description);
-    const [itemInitialHourText, setItemInitialHourText] = useState(itemInfo.initialHourText);
-    const [itemFinalHourText, setItemFinalHourText] = useState(itemInfo.finalHourText);
-    
+    const day = useMemo(() => moment(selectedDayEvents).format("ddd"), [
+        selectedDayEvents,
+    ]);
 
-    const calculatePercentageColor = () => {
-        const percentageColorObject = calculatePercentage(itemInfo.date);
-        setProgress(percentageColorObject.percentage);
-        setColor(percentageColorObject.color)
-    }
+    const percentageColorObject = useMemo(() => calculatePercentage(itemInfo.date), [
+    itemInfo.date,
+    ]);
 
-    useEffect(() => {
-        calculatePercentageColor()
-        setItemName(itemInfo.name);
-        setItemDescription(itemInfo.description);
-        setItemInitialHourText(itemInfo.initialHourText);
-        setItemFinalHourText(itemInfo.finalHourText);
-    }, [itemInfo])
-
-    const day = moment(selectedDayEvents).format("ddd")
-  
-  
     const handleEditEvent = () => {
-        setSelectedEvent(itemInfo);
-        changeModalVisible();
-    }
+    setSelectedEvent(itemInfo);
+    changeModalVisible();
+    };
   
     return (
         <>
@@ -65,49 +48,24 @@ const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelected
                 }}>
                     {/* Item date */}
                     <View>
-                        <Text style={{
-                            fontSize: 15, 
-                            textAlign: "center",
-                            color: "#8FC1A9"
-                        }}>
+                        <Text style={styles.dateText}>
                             {spanishWeekDays[day]}
                         </Text>        
-                        <View style={{
-                            backgroundColor: "#8FC1A9",
-                            width: 40,
-                            height: 40,
-                            borderRadius: 20,
-                            justifyContent: "center",
-                            alignItems: "center",                    
-                        }}>
-                            <Text style={{
-                                textAlign: "center",
-                                fontSize: 20,
-                                color: "white"
-                            }}>
+                        <View style={styles.dateBackground}>
+                            <Text style={styles.dateNumber}>
                                 {moment(selectedDayEvents).date()}
                             </Text>
                         </View>
-        
+
                     </View>
 
-                    <View style={{
-                        flex: 1,
-                        marginLeft: 20,
-                        gap: 10,
-                        justifyContent: "center",
-                        maxWidth: "60%"
-                    }}>
+                    <View style={styles.progressBarContainer}>
                         <ProgressBar 
-                            progress={progress} 
-                            color={color}
-                            style={{ 
-                                height: 10,
-                                borderRadius: 10,
-                                maxWidth: "100%"
-                        }} 
+                            progress={percentageColorObject.percentage} 
+                            color={percentageColorObject.color}
+                            style={styles.progressBar} 
                         />
-                        <Text style={{fontWeight: "600", fontSize: 15, alignSelf: "flex-start"}}>{itemName}</Text>
+                        <Text style={styles.name}>{itemInfo.name}</Text>
                     </View>
                 </View>
 
@@ -121,23 +79,17 @@ const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelected
 
             <View style={{paddingHorizontal: 20}}>
                 <View style={{marginVertical: 10, gap: 5}}>
-                    <Text>Hora inicial: {itemInitialHourText}</Text>
-                    <Text>Hora final: {itemFinalHourText}</Text>
+                    <Text>Hora inicial: {itemInfo.initialHourText}</Text>
+                    <Text>Hora final: {itemInfo.finalHourText}</Text>
                 </View>
-                        <Text style={{color: "#5B83B0", marginTop: 10, marginBottom: 3}}>Descripción</Text>
-                        <TextInput
-                            editable={false}
-                            multiline
-                            numberOfLines={4}
-                            value={itemDescription}
-                            style={{
-                                borderColor: "#00000066",
-                                borderRadius: 5,
-                                padding: 8,
-                                textAlignVertical: "top",
-                                backgroundColor: "#FAF3DD"
-                            }}
-                        />
+                <Text style={styles.descriptionText}>Descripción</Text>
+                <TextInput
+                    editable={false}
+                    multiline
+                    numberOfLines={4}
+                    value={itemInfo.description}
+                    style={styles.descriptionInput}
+                />
             </View>
         </>
       );
@@ -152,7 +104,63 @@ const styles = StyleSheet.create({
         flexDirection: "row", 
         justifyContent: "space-between",
         alignItems: "center"
+    },
+
+    dateText: {
+        fontSize: 15, 
+        textAlign: "center",
+        color: "#8FC1A9"
+    },
+
+    dateBackground: {
+        backgroundColor: "#8FC1A9",
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",                    
+    },
+
+    dateNumber: {
+        textAlign: "center",
+        fontSize: 20,
+        color: "white"
+    },
+
+    progressBarContainer: {
+        flex: 1,
+        marginLeft: 20,
+        gap: 10,
+        justifyContent: "center",
+        maxWidth: "60%"
+    },
+
+    progressBar: { 
+        height: 10,
+        borderRadius: 10,
+        maxWidth: "100%"
+    },
+
+    name: {
+        fontWeight: "600", 
+        fontSize: 15, 
+        alignSelf: "flex-start"
+    },
+
+    descriptionText: {
+        color: "#5B83B0", 
+        marginTop: 10, 
+        marginBottom: 3
+    },
+
+    descriptionInput: {
+        borderColor: "#00000066",
+        borderRadius: 5,
+        padding: 8,
+        textAlignVertical: "top",
+        backgroundColor: "#FAF3DD"
     }
+
 })
 
 export default EventItem;

@@ -22,7 +22,7 @@ LocaleConfig.defaultLocale = "es";
 const EventCalendar = ({
   daySelected, setDaySelected, eventCalendarItems,
   changeModalVisible, setSelectedEvent, itemInfo, setItemInfo,
-  onDelete }) => {
+  handleDeleteEvent }) => {
 
   const [selectedDayEvents, setSelectedDayEvents] = useState(new Date());
   const [unselectedEvent, setUnselectedEvent] = useState(true);
@@ -128,7 +128,7 @@ const EventCalendar = ({
                           setSelectedDayEvents={setSelectedDayEvents}
                           itemInfo={itemInfo}
                           setItemInfo={setItemInfo}
-                          onDelete={onDelete} />
+                          handleDeleteEvent={handleDeleteEvent} />
                       )
                     }}
                     keyExtractor={item => item["id"]}

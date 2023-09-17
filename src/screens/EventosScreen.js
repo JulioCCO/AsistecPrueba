@@ -38,7 +38,7 @@ const EventosScreen = () => {
     setIsModalVisible(!isModalVisible);
   }
 
-  const handleEventCreated = (event, oldName) => {
+  const handleCreateEvent = (event, oldName) => {
     const eventDate = Object.keys(event)[0];
     const eventsDates = Object.keys(eventItems);
 
@@ -58,24 +58,7 @@ const EventosScreen = () => {
 
     // If there is already an event on the selected date and it is being edited, the event is updated.
     else if(eventsDates.includes(eventDate) && selectedEvent !== null) {
-      // The event is updated
-      const newEventItems = eventItems[eventDate].map((item) => {
-        /* If the name of the event is equal to the name of the selected event, 
-        the event is updated if the name has been changed. */
-
-        // Check if the name has been changed
-        if(oldName !== "" && item.name === oldName) return event[eventDate][0];
-        else {
-          if(item.name === selectedEvent.name) return event[eventDate][0];
-        }
-        return item;
-      });
-
-      setEventItems({...eventItems, [eventDate] : newEventItems});
-      setNewEvent(event[eventDate][0]);
-      setShowNotification(true);
-      setItemInfo(event[Object.keys(event)][0]);
-
+      handleEditEvent(event, oldName, eventItems, eventDate);
     } else {
       setEventItems({...eventItems, [eventDate] : event[eventDate]});
       setNewEvent(event[eventDate][0]);
@@ -84,7 +67,28 @@ const EventosScreen = () => {
 
   }
 
-  const onDelete = (item) => {
+  const handleEditEvent = (event, oldName, eventItems, eventDate) => {
+    // The event is updated
+    const newEventItems = eventItems[eventDate].map((item) => {
+      /* If the name of the event is equal to the name of the selected event, 
+      the event is updated if the name has been changed. */
+
+      // Check if the name has been changed
+      if(oldName !== "" && item.name === oldName) return event[eventDate][0];
+      if(item.name === selectedEvent.name) return event[eventDate][0];
+
+      return item;
+    });
+
+    setEventItems({...eventItems, [eventDate] : newEventItems});
+    // Event is saved in the AsyncStorage
+    AsyncStorage.setItem("storedEvents", JSON.stringify({...eventItems, [eventDate] : newEventItems}));
+    setNewEvent(event[eventDate][0]);
+    setShowNotification(true);
+    setItemInfo(event[Object.keys(event)][0]);
+  }
+   
+  const handleDeleteEvent = (item) => {
     const itemToDelete = eventItems[item["date"]];
     const newItemsArray = itemToDelete.filter(event => event["name"] != item["name"]);
 
@@ -118,7 +122,7 @@ const EventosScreen = () => {
         setSelectedEvent={setSelectedEvent}
         itemInfo={itemInfo}
         setItemInfo={setItemInfo}
-        onDelete={onDelete}
+        handleDeleteEvent={handleDeleteEvent}
       />
 
       {/* Button to create new event (Icon at bottom right) */}
@@ -140,7 +144,7 @@ const EventosScreen = () => {
           changeModalVisible={changeModalVisible}
           daySelected={daySelected}
           isModalVisible={isModalVisible}
-          onEventCreated={handleEventCreated}
+          handleCreateEvent={handleCreateEvent}
           selectedEvent={selectedEvent}
 
         />
