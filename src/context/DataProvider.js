@@ -65,6 +65,7 @@ const DataProvider = ({ children }) => {
 
     useEffect(() => {
         getNotifications();
+        console.log("eventItems: ", eventItems);
     }, [eventItems]);
 
     return (

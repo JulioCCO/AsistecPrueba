@@ -13,11 +13,10 @@ import { Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SelectList } from "react-native-dropdown-select-list";
-
 import moment from "moment";
-
 import { idGenerator } from "../../helpers/IdGenerator";
 
+//Window Dimensions
 const WIDTH = Dimensions.get("window").width - 70;
 const HEIGHT = Dimensions.get("window").height - 160;
 
