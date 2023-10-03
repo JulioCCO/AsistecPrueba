@@ -2,10 +2,12 @@ import React from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import TabConfig from "./TabConfig";
 
 import EventosScreen from "../../screens/EventosScreen";
 import HorarioScreen from "../../screens/HorarioScreen";
 import NotificationScreen from "../../screens/NotificacionScreen";
+import { ta } from "date-fns/locale";
 
 const Tab = createBottomTabNavigator();
 
@@ -14,15 +16,8 @@ export const BottomTab = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          if (route.name === "Eventos") {
-            iconName = focused ? "calendar" : "calendar-outline";
-          } else if (route.name === "Notificaciones") {
-            iconName = focused ? "notifications" : "notifications-outline";
-          } else if (route.name === "Horario") {
-            iconName = focused ? "list" : "list-outline";
-          }
-          // You can return any component that you like here!
+          const config = TabConfig[route.name];
+          const iconName = focused ? config.iconName : config.iconNameOutline;
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#769ECB",
