@@ -167,8 +167,8 @@ const agregarComponente = (
     var componente = {
       id: ultimoIdTemp + 1,
       idRelacion: ultimoIdRelacionTemp,
-      start: element[0],
-      end: element[1],
+      start: new Date(element[0]),
+      end: new Date(element[1]),
       title: activityName,
       description: description,
       modalityType: modalityType,

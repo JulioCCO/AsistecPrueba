@@ -22,14 +22,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.s.solis.AsistecPrueba"
+      "package": "com.juliocco93.AsistecPrueba"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "e6e052a8-b9f6-432d-a086-5bdf93cb427e"
+        "projectId": "3b1432cf-3f48-4b28-8722-048d01ac5f80"
       }
     }
   }
