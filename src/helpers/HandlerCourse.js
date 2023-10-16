@@ -15,11 +15,8 @@ const getDates = (startDate, lastDate, horaInicio, horaFin, Days) => {
       var dateTimeI =
         formato + " " + moment(horaInicio, "HH:mm").format("HH:mm");
       var dateTimeF = formato + " " + moment(horaFin, "HH:mm").format("HH:mm");
-
-      var dateObject1 = new Date(dateTimeI).toISOString();
-      var dateObject2 = new Date(dateTimeF).toISOString();
-      fechas.push(dateObject1); // Agregar la fecha al array
-      fechas.push(dateObject2); // Agregar la fecha al array
+      fechas.push(new Date(dateTimeI)); // Agregar la fecha al array
+      fechas.push(new Date(dateTimeF)); // Agregar la fecha al array
       //
       ListaFechas.push(fechas);
     }

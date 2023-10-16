@@ -23,25 +23,24 @@ const Messages = ({
         {
           text: "SI",
           onPress: () => {
+            changeModalVisible(),
             setEditRelationComponent(true),
-              changeModalVisible(),
-              setTypeExitMessage(true);
+            setTypeExitMessage(true);
           },
         },
         {
           text: "NO",
           onPress: () => {
-            setEditRelationComponent(false),
               changeModalVisible(),
+              setEditRelationComponent(false),
               setTypeExitMessage(true);
           },
         },
-      ],
-      { cancelable: false }
+      ]
     );
   };
 useEffect(() => {
-  if (EditMessageVisible == true) {
+  if (EditMessageVisible) {
     mostrarAlerta();
   }
 }), [EditMessageVisible];

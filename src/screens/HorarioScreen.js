@@ -8,16 +8,16 @@ import EditControls from "../components/Schedule/Edit/EditModalControls";
 import { DeleteModalControls } from "../components/Schedule/Delete/DeleteModalControls";
 import useData from "../hooks/useData";
 import { Calendar } from "react-native-big-calendar";
-import { set } from "date-fns";
+
 
 const HorarioScreen = () => {
-
-      
   const { ultimoId, setUltimoId } = useData(0); // Ultimo id de la lista de componentes
   const { ultimoIdRelacion, setUltimoIdRelacion } = useData(0); // Ultimo id de la lista de componentes
 
   const [isModalVisible, setIsModalVisible] = useState(false); //Al ser TRUE muestra el modal de agregar
+  const [options, setOptions] = useState(false); //Al ser TRUE muestra el modal de opciones
   const [deleteFlag, setDeleteFlag] = useState(false); //Al ser TRUE muestra el basurero en rojo
+  const [editFlag, seteditFlag] = useState(false); //Al ser TRUE muestra el edit en rojo
   // Variables para mostrar el componente Message de editar
   const [EditMessageVisible, setEditMessageVisible] = useState(false); //Al ser TRUE muestra el componente Message de editar
   const [editRelationComponent, setEditRelationComponent] = useState(false); // Al SER TRUE Cambia todos los eventos relacionados al editar
@@ -108,17 +108,22 @@ const HorarioScreen = () => {
 
       {/* calendar */}
       <Calendar
-        theme={
-            {
-                palette: {
-                  primary: {
-                    main: '#8FC1A9',
-                    contrastText: '#000',
-                  },
-                },
-              }
-        }
+        theme={{
+          palette: {
+            primary: {
+              main: "#8FC1A9",
+              contrastText: "#000",
+            },
+          },
+          typography: {
+            xs: { fontSize: 12 },
+            sm: { fontSize: 12 }, //tamaño letra numeros encabezado
+            xl: { fontSize: 16 },
+          },
+        }}
+        activeDate={new Date()}
         events={listaComponents}
+        showTime={true}
         height={600}
         mode={viewMode}
         onPressEvent={(event) => {
@@ -126,32 +131,58 @@ const HorarioScreen = () => {
           if (deleteFlag == true) {
             changeDeleteMessageVisible();
           } else {
-            changeEditMessageVisible();
+            if (editFlag == true) {
+              changeEditMessageVisible();
+            }
           }
         }}
         eventCellStyle={(event) => {
-            let backgroundColor = event.color;
-            return { backgroundColor: backgroundColor};
-            }}
-       
+          let backgroundColor = event.color;
+          return { backgroundColor: backgroundColor };
+        }}
         weekStartsOn={1}
         swipeEnabled={true}
       />
-
-      {/* Add button */}
-      <TouchableOpacity onPress={changeModalVisible} style={styles.addCA}>
-        <Icon name="plus" type="font-awesome" color="#ffffff" size={24} />
-      </TouchableOpacity>
-      {/* Delete button */}
       <TouchableOpacity
-        onPress={() => {setDeleteFlag(!deleteFlag)}}
-        style={[
-          styles.deleteCA,
-          { backgroundColor: deleteFlag ? "#FF5733" : "#5B83B0" },
-        ]}
-      >
-        <Icon name="trash" type="font-awesome" color="#ffffff" size={25} />
+      onPress={() => {
+        setOptions(!options);
+      }}
+      style={styles.options}>
+        <Icon name="ellipsis-v" type="font-awesome" color="#ffffff" size={25} />
+        {options && (
+          <TouchableOpacity onPress={changeModalVisible} style={styles.addCA}>
+          <Icon name="plus" type="font-awesome" color="#ffffff" size={25} />
+        </TouchableOpacity>
+        )}
+        {options && (
+          <TouchableOpacity
+          onPress={() => {
+            setDeleteFlag(!deleteFlag);
+          }}
+          style={[
+            styles.deleteCA,
+            { backgroundColor: deleteFlag ? "#FF5733" : "#5B83B0" },
+          ]}
+        >
+          <Icon name="trash" type="font-awesome" color="#ffffff" size={25} />
+        </TouchableOpacity>
+        )}
+        {options && (
+          <TouchableOpacity
+          onPress={() => {
+            seteditFlag(!editFlag);
+          }}
+          style={[
+            styles.editCA,
+            { backgroundColor: editFlag ? "#FF5733" : "#5B83B0" },
+          ]}
+        >
+          
+          <Icon name="edit" type="font-awesome" color="#ffffff" size={25} />
+        </TouchableOpacity>
+        )}
       </TouchableOpacity>
+      
 
       {/* Add event modal */}
       <Modal
@@ -259,7 +290,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-
+  options: {
+    position: "absolute",
+    backgroundColor: "#5B83B0",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 30,
+    right: 15,
+  },
   addCA: {
     position: "absolute",
     backgroundColor: "#5B83B0",
@@ -268,8 +309,8 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    bottom: 15,
-    right: 15,
+    bottom: 70,
+    right:0,
   },
   deleteCA: {
     position: "absolute",
@@ -278,8 +319,18 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    bottom: 70,
-    right: 15,
+    bottom: 125,
+    right: 0,
+  },
+  editCA: {
+    position: "absolute",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 180,
+    right: 0,
   },
   information: {
     backgroundColor: "#5B83B0",

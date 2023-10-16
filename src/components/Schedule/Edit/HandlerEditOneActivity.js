@@ -132,8 +132,8 @@ const agregarComponente = (
     var dateTimeI = formato + " " + moment(initialHour, "HH:mm").format("HH:mm");
     var dateTimeF = formato + " " + moment(finalHour, "HH:mm").format("HH:mm");
 
-    var dateObject1 = new Date(dateTimeI).toISOString();
-    var dateObject2 = new Date(dateTimeF).toISOString();
+    var dateObject1 = new Date(dateTimeI)
+    var dateObject2 = new Date(dateTimeF)
     // Buscar el componente a editar en la lista de componentes
     var componente = listaComponents.find((item) => item.id == id);
     //si viene modificar 1 = 1

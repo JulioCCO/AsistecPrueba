@@ -14,10 +14,10 @@ const getDates = (startDate, lastDate, horaInicio, horaFin, Days) => {
       var dateTimeI = formato + " " + moment(horaInicio, "HH:mm").format("HH:mm");
       var dateTimeF = formato + " " + moment(horaFin, "HH:mm").format("HH:mm");
 
-      var dateObject1 = new Date(dateTimeI).toISOString();
-      var dateObject2 = new Date(dateTimeF).toISOString();
-      fechas.push(dateObject1); // Agregar la fecha al array
-      fechas.push(dateObject2); // Agregar la fecha al array
+      // var dateObject1 = new Date(dateTimeI).toISOString();
+      // var dateObject2 = new Date(dateTimeF).toISOString();
+      fechas.push(new Date(dateTimeI)); // Agregar la fecha al array
+      fechas.push(new Date(dateTimeF)); // Agregar la fecha al array
       //
       ListaFechas.push(fechas);
     }
@@ -167,8 +167,8 @@ const agregarComponente = (
     var componente = {
       id: ultimoIdTemp + 1,
       idRelacion: ultimoIdRelacionTemp,
-      start: new Date(element[0]),
-      end: new Date(element[1]),
+      start: element[0],
+      end: element[1],
       title: activityName,
       description: description,
       modalityType: modalityType,

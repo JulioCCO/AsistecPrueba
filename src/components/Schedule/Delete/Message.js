@@ -1,7 +1,6 @@
-import React, {useEffect} from "react";
-import Dialog from "react-native-dialog";
+import React, { useEffect } from "react";
 
-import { View,Alert } from "react-native";
+import { View, Alert } from "react-native";
 
 const Messages = ({
   changeModalVisible,
@@ -18,33 +17,33 @@ const Messages = ({
           text: "Cancelar",
           onPress: () => {
             changeModalVisible(), setTypeExitMessage(false);
-            
           },
         },
         {
           text: "SI",
           onPress: () => {
-            setEditRelationComponent(true), changeModalVisible(), setTypeExitMessage(true)
+            changeModalVisible(),
+            setEditRelationComponent(true),
+            setTypeExitMessage(true);
           },
         },
         {
           text: "NO",
           onPress: () => {
+            changeModalVisible(),
             setEditRelationComponent(false),
-            changeModalVisible(), setTypeExitMessage(true)
+            setTypeExitMessage(true);
           },
         },
-      ],
-      { cancelable: false }
+      ]
     );
   };
-useEffect(() => {
-  if (EditMessageVisible == true) {
-    mostrarAlerta();
-  }
-}), [EditMessageVisible];
- 
- 
+  useEffect(() => {
+    if (EditMessageVisible) {
+      mostrarAlerta();
+    }
+  }),
+    [EditMessageVisible];
 };
 
 export default Messages;
