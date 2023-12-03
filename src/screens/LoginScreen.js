@@ -1,16 +1,32 @@
-import React from "react";
+import React, {useState} from "react";
 
 import {
     View, Text, Image, 
     StyleSheet,TouchableOpacity
 } from "react-native";
-
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
+import axios from 'axios';
+
 const LoginScreen= () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
     // Use the useNavigation hook to get the navigation object
     const navigation = useNavigation();
+
+    const handleLogin = async() => {
+        const response = await axios.get("http://192.168.1.144:4000/api/users", {params: {email, password}});
+
+        if(!response.data.hasOwnProperty("msg")) {
+            setEmail("");
+            setPassword("");
+            navigation.navigate("Home");
+        } else {
+            alert(response.data["msg"]);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -29,6 +45,8 @@ const LoginScreen= () => {
                     placeholderTextColor={"#00000066"}
                     leftIcon={<Icon name="email" type="material" color="#769ECB" />}
                     style={styles.inputs} 
+                    value={email}
+                    onChange={(text) => setEmail(text.nativeEvent.text)}
                 />
 
                 <Input
@@ -39,12 +57,14 @@ const LoginScreen= () => {
                     placeholderTextColor={"#00000066"}
                     leftIcon={<Icon name="lock-closed-outline" type="ionicon" color="#769ECB" />} 
                     style={styles.inputs} 
+                    value={password}
+                    onChange={(text) => setPassword(text.nativeEvent.text)}
                 />
             </View>
 
             <TouchableOpacity 
                 // Navigate to Home screen when login button is pressed
-                onPress={() => navigation.navigate("Home")} 
+                onPress={handleLogin} 
                 style={styles.loginButton}>
                 <Text 
                     style={styles.loginButtonText}>

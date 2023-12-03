@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
     View, Text, Image, 
@@ -7,9 +7,29 @@ import {
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
+import axios from "axios";
+
 const LoginScreen= () => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
     // Use the useNavigation hook to get the navigation object
     const navigation = useNavigation();
+
+    const handleClick = async() => {
+        const response = await axios.post("http://192.168.1.144:4000/api/users", {name, email, password});
+
+        if(!response.data.hasOwnProperty("msg")) {
+            alert(response.data["succes"]);
+            setName("");
+            setEmail("");
+            setPassword("");
+            navigation.navigate("Login");
+        } else {
+            alert(response.data["msg"]);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -24,10 +44,12 @@ const LoginScreen= () => {
                 <Input
                     type="text"
                     inputContainerStyle={{borderBottomWidth:0}} 
-                    placeholder="Tu nombre" 
+                    placeholder="Nombre Completo" 
                     placeholderTextColor={"#00000066"}
                     leftIcon={<Icon name="perm-identity" type="material" color="#769ECB" />}
                     style={styles.inputs} 
+                    value={name}
+                    onChange={(text) => setName(text.nativeEvent.text)}
                 />
 
                 <Input
@@ -37,6 +59,8 @@ const LoginScreen= () => {
                     placeholderTextColor={"#00000066"}
                     leftIcon={<Icon name="email" type="material" color="#769ECB" />}
                     style={styles.inputs} 
+                    value={email}
+                    onChange={(text) => setEmail(text.nativeEvent.text)}
                 />
 
                 <Input
@@ -46,13 +70,15 @@ const LoginScreen= () => {
                     placeholder="Contraseña" 
                     placeholderTextColor={"#00000066"}
                     leftIcon={<Icon name="lock-closed-outline" type="ionicon" color="#769ECB" />} 
-                    style={styles.inputs} 
+                    style={styles.inputs}
+                    value={password}
+                    onChange={(text) => setPassword(text.nativeEvent.text)} 
                 />
             </View>
 
             <TouchableOpacity 
                 // Navigate to CreateAccountScreen screen when login button is pressed
-                onPress={() => navigation.navigate("CreateAccountScreen")} 
+                onPress={handleClick} 
                 style={styles.loginButton}>
                 <Text 
                     style={styles.loginButtonText}>
