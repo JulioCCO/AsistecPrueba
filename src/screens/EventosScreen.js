@@ -26,7 +26,7 @@ const EventosScreen = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [newEvent, setNewEvent] = useState({});
   //Function to refresh the notifications, events and components
-  const { getNotifications, refreshEventData, setEventTransaction } = useData();
+  const { getNotifications, refreshEventData, setEventTransaction, setAllEventsDeleted } = useData();
 
   useEffect(() => {
     if (showNotification) {
@@ -104,6 +104,9 @@ const EventosScreen = () => {
       delete eventItems[item["date"]];
       if(Object.keys(eventItems).length === 0) {
         setEventItems({"init": "init"});
+        setAllEventsDeleted(true);
+        setEventTransaction(true);
+
       }
     } else {
       setEventItems({...eventItems, [item["date"]]: newItemsArray})

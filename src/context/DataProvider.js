@@ -5,7 +5,7 @@ import moment from "moment";
 import { calculateTimingNotification } from "../helpers/calculateTimingNotification";
 import { formatTime } from "../helpers/formatTime";
 
-import {getEvents, updateEvents, registerEvents} from "../api/events";
+import {getEvents, updateEvents, registerEvents, deleteEvents} from "../api/events";
 
 const DataContext = createContext();
 
@@ -14,7 +14,8 @@ const DataProvider = ({ children }) => {
     const [listaComponents, setListaComponents] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [eventTransaction, setEventTransaction] = useState(false);
-    const [userDatabaseID, setUserDatabaseID] = useState("calendarioEventosPrueba"); // 
+    const [userDatabaseID, setUserDatabaseID] = useState("calendarioEventosPrueba");
+    const [allEventsDeleted, setAllEventsDeleted] = useState(false);
 
     // For the proper functioning of the components, you must have a unique id for each one of them.
     // To do this, you must have a counter that is incremented each time a component is created.
@@ -68,10 +69,22 @@ const DataProvider = ({ children }) => {
 
     const refreshEventData = async () => {
         try {
+            console.log("refreshing data")
             if(eventItems["init"]) {
-                //when the user has no events on the database
-            await registerEvents(eventItems, userDatabaseID);
-            } else {
+                if(allEventsDeleted) {
+                    console.log("deleting: ", eventItems);
+                    //when the user is deleting the only event that he has on the database
+                    await deleteEvents(userDatabaseID);
+                }
+                
+            } else if( await getEvents(userDatabaseID) === null) {
+                console.log("registering: ", eventItems);
+                //when the user has no events on the database and have to create a new document
+                await registerEvents(eventItems, userDatabaseID);
+            }
+
+            else {
+                console.log("refreshing: ", eventItems);
                 //whe the user has events on the database and wants to add a new one or edit one
                 await updateEvents(eventItems, userDatabaseID);
             }
@@ -79,13 +92,18 @@ const DataProvider = ({ children }) => {
             console.error('Error registering event:', error);
         }
         setEventTransaction(false);
+        setAllEventsDeleted(false);
     };
 
     const loadEvents = async (userId) => {
         try {
+
+            console.log("Loading events...");
+
             // Get events from API with the user id
             const events = await getEvents(userId);
-    
+
+            // Check if events is not null
             if (events !== null) {
                 console.log("Event data:", events);
                 if (JSON.stringify(events) !== JSON.stringify(eventItems)) {
@@ -132,7 +150,6 @@ const DataProvider = ({ children }) => {
     useEffect(() => {
 
         getNotifications();
-        console.log("eventItems: ", eventItems);
     }, [eventItems]);
 
     return (
@@ -149,7 +166,8 @@ const DataProvider = ({ children }) => {
             notifications,
             eventTransaction,
             setEventTransaction,
-            refreshEventData
+            refreshEventData,
+            setAllEventsDeleted
         }}>
             {children}
         </DataContext.Provider>
