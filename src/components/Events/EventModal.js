@@ -120,6 +120,8 @@ const  EventModal = ({
       selectedReminder) || isAllDay
 
     ) {
+      const initialHourToString = initialHour.toString();
+      const finalHourToString = finalHour.toString();
       // Validate that the start time is less than the end time.
       if(new Date(initialHour).getTime() < new Date(finalHour).getTime()){
         const newEvent = {
@@ -128,8 +130,8 @@ const  EventModal = ({
               name: title,
               id: idGenerator(),
               description,
-              initialHour,
-              finalHour,
+              initialHour: initialHourToString,
+              finalHour: finalHourToString,
               initialHourText,
               finalHourText,
               reminder: selectedReminder,

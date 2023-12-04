@@ -61,7 +61,7 @@ const  EventModalBody = ({
                 {showInitialHour && (
                 <DateTimePicker
                     testID="dateTimePicker"
-                    value={initialHour}
+                    value={new Date(initialHour)}
                     mode="time"
                     is24Hour={false}
                     display="default"
@@ -82,7 +82,7 @@ const  EventModalBody = ({
                 {showFinalHour && (
                 <DateTimePicker
                     testID="dateTimePicker"
-                    value={finalHour}
+                    value={new Date(finalHour)}
                     mode="time"
                     is24Hour={false}
                     display="default"

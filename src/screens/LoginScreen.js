@@ -17,15 +17,16 @@ const LoginScreen= () => {
     const navigation = useNavigation();
 
     const handleLogin = async() => {
-        const response = await axios.get("http://192.168.1.144:4000/api/users", {params: {email, password}});
+        // const response = await axios.get("http://192.168.1.144:4000/api/users", {params: {email, password}});
 
-        if(!response.data.hasOwnProperty("msg")) {
-            setEmail("");
-            setPassword("");
-            navigation.navigate("Home");
-        } else {
-            alert(response.data["msg"]);
-        }
+        // if(!response.data.hasOwnProperty("msg")) {
+        //     setEmail("");
+        //     setPassword("");
+        //     navigation.navigate("Home");
+        // } else {
+        //     alert(response.data["msg"]);
+        // }
+        navigation.navigate("Home");
     }
 
     return (

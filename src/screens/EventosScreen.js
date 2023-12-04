@@ -13,6 +13,9 @@ import EventModal from "../components/Events/EventModal";
 import EventCalendar from "../components/Events/EventCalendar";
 import PushNotification from "../components/Notification/PushNotification";
 import useData from "../hooks/useData";
+import { set } from "date-fns";
+
+
 
 const EventosScreen = () => {
   const [daySelected, setDaySelected] = useState(moment().format("YYYY-MM-DD"));
@@ -22,8 +25,8 @@ const EventosScreen = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [newEvent, setNewEvent] = useState({});
-  //Function to refresh the notifications
-  const { getNotifications } = useData();
+  //Function to refresh the notifications, events and components
+  const { getNotifications, refreshEventData, setEventTransaction } = useData();
 
   useEffect(() => {
     if (showNotification) {
@@ -38,7 +41,10 @@ const EventosScreen = () => {
     setIsModalVisible(!isModalVisible);
   }
 
-  const handleCreateEvent = (event, oldName) => {
+
+  
+
+  const handleCreateEvent= (event, oldName) => {
     const eventDate = Object.keys(event)[0];
     const eventsDates = Object.keys(eventItems);
 
@@ -53,6 +59,7 @@ const EventosScreen = () => {
     if(eventsDates.includes(eventDate) && selectedEvent === null) {
       setEventItems({...eventItems, [eventDate] : [...eventItems[eventDate], event[eventDate][0]]});
       setNewEvent(event[eventDate][0]);
+      setEventTransaction(true);
       setShowNotification(true);
     }
 
@@ -62,7 +69,9 @@ const EventosScreen = () => {
     } else {
       setEventItems({...eventItems, [eventDate] : event[eventDate]});
       setNewEvent(event[eventDate][0]);
+      setEventTransaction(true);
       setShowNotification(true);
+
     }
 
   }
@@ -81,9 +90,8 @@ const EventosScreen = () => {
     });
 
     setEventItems({...eventItems, [eventDate] : newEventItems});
-    // Event is saved in the AsyncStorage
-    AsyncStorage.setItem("storedEvents", JSON.stringify({...eventItems, [eventDate] : newEventItems}));
     setNewEvent(event[eventDate][0]);
+    setEventTransaction(true);
     setShowNotification(true);
     setItemInfo(event[Object.keys(event)][0]);
   }
@@ -99,8 +107,10 @@ const EventosScreen = () => {
       }
     } else {
       setEventItems({...eventItems, [item["date"]]: newItemsArray})
+      setEventTransaction(true);
     }
     getNotifications();
+    refreshEventData();
   }
 
   return (
