@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  View,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet
-} from "react-native";
+import { View, TouchableOpacity, Dimensions, StyleSheet } from "react-native";
 
 import moment from "moment";
 import { idGenerator } from "../../helpers/IdGenerator";
 import EventModalTop from "./EventModalTop";
 import EventModalBody from "./EventModalBody";
+import useData from "../../hooks/useData";
+import { u } from "react-native-big-calendar";
 
 //Window Dimensions
 const WIDTH = Dimensions.get("window").width - 70;
 const HEIGHT = Dimensions.get("window").height - 160;
 
-const  EventModal = ({ 
-  changeModalVisible, 
-  daySelected, 
-  handleCreateEvent, 
-  isModalVisible, 
-  selectedEvent 
+const EventModal = ({
+  changeModalVisible,
+  daySelected,
+  handleCreateEvent,
+  handleEditEvent,
+  isModalVisible,
+  selectedEvent,
 }) => {
+  const { userDatabaseID } = useData();
+
   const [eventData, setEventData] = useState({
     title: "",
     description: "",
+    userId: userDatabaseID,
     initialHour: new Date(),
     finalHour: new Date(),
     initialHourText: "Seleccionar hora",
@@ -96,7 +97,7 @@ const  EventModal = ({
       });
     }
   }, []);
-  
+
   useEffect(() => {
     if (isAllDay) {
       setEventData({
@@ -109,45 +110,42 @@ const  EventModal = ({
     }
   }, [isAllDay]);
 
-
   const handleOnCreateEvent = () => {
     // Validate that all fields are complete
     if (
       (title &&
-      description &&
-      initialHourText !== "Seleccionar hora" &&
-      finalHourText !== "Seleccionar hora" &&
-      selectedReminder) || isAllDay
-
+        description &&
+        initialHourText !== "Seleccionar hora" &&
+        finalHourText !== "Seleccionar hora" &&
+        selectedReminder) ||
+      isAllDay
     ) {
       const initialHourToString = initialHour.toString();
       const finalHourToString = finalHour.toString();
       // Validate that the start time is less than the end time.
-      if(new Date(initialHour).getTime() < new Date(finalHour).getTime()){
+      if (new Date(initialHour).getTime() < new Date(finalHour).getTime()) {
         const newEvent = {
-          [daySelected] : [
-            {
-              name: title,
-              id: idGenerator(),
-              description,
-              initialHour: initialHourToString,
-              finalHour: finalHourToString,
-              initialHourText,
-              finalHourText,
-              reminder: selectedReminder,
-              reminderText: reminderValues[selectedReminder - 1].value,
-              isAllDay,
-              date: daySelected,
-            },
-          ],
+          name: title,
+          userId: userDatabaseID,
+          description,
+          initialHour: initialHourToString,
+          finalHour: finalHourToString,
+          initialHourText,
+          finalHourText,
+          reminder: selectedReminder,
+          reminderText: reminderValues[selectedReminder - 1].value,
+          isAllDay,
+          date: daySelected,
         };
 
         // Reset values
         const resetEventData = {
           title: "",
+          userId: userDatabaseID,
           description: "",
           initialHour: new Date(),
           finalHour: new Date(),
+          id: idGenerator(),
           initialHourText: "Seleccionar hora",
           finalHourText: "Seleccionar hora",
           selectedReminder: 3,
@@ -159,7 +157,9 @@ const  EventModal = ({
 
         setEventData(resetEventData);
         closeModal();
-        handleCreateEvent(newEvent, editedName);
+        if (selectedEvent !== null) {
+          handleEditEvent(newEvent, newEvent.id);
+        } else handleCreateEvent(newEvent);
       } else {
         alert("La hora de inicio debe ser menor a la hora final");
       }
@@ -179,10 +179,13 @@ const  EventModal = ({
   return (
     <TouchableOpacity
       disabled={true}
-      style={[styles.container, {backgroundColor: isModalVisible ? "rgba(0,0,0,0.4)" : "transparent"}]}
+      style={[
+        styles.container,
+        { backgroundColor: isModalVisible ? "rgba(0,0,0,0.4)" : "transparent" },
+      ]}
     >
       <View style={styles.generalView}>
-        <EventModalTop 
+        <EventModalTop
           closeModal={closeModal}
           daySelected={daySelected}
           modalTitle={modalTitle}
@@ -191,7 +194,7 @@ const  EventModal = ({
           eventData={eventData}
         />
 
-        <EventModalBody 
+        <EventModalBody
           setEventData={setEventData}
           eventData={eventData}
           description={description}

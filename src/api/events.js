@@ -1,12 +1,10 @@
 import axios from 'axios';
 
 const API = 'http://192.168.1.106:4000/api/events'
-export const registerEvents = (event, userID) => {
+export const createEvent = (event) => {
     try {
-        const eventDocument = {
-            _id: userID,
-            eventItems: event
-        }
+        const eventDocument = event
+        
         axios.post(`${API}/registerEvent`, eventDocument)
             .then(res => {
                 console.log('API response:', res.data);

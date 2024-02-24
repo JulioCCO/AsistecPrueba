@@ -10,7 +10,7 @@ import {getEvents, updateEvents, registerEvents, deleteEvents} from "../api/even
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
-    const [eventItems, setEventItems] = useState({ "init": "init" });
+    const [eventItems, setEventItems] = useState([{"init": "init"}] );
     const [listaComponents, setListaComponents] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [eventTransaction, setEventTransaction] = useState(false);
@@ -95,6 +95,14 @@ const DataProvider = ({ children }) => {
         setAllEventsDeleted(false);
     };
 
+    const createEvent = async (event) => {
+        try {
+            await registerEvents(event, userDatabaseID);
+        } catch (error) {
+            console.error('Error registering event:', error);
+        }
+    }
+
     const loadEvents = async (userId) => {
         try {
 
@@ -119,38 +127,38 @@ const DataProvider = ({ children }) => {
     };
 
     // Load events from API when the component is mounted for the first time
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Load events from API
-                await loadEvents("calendarioEventosPrueba");   
-            } catch (error) {
-                console.error("Error in useEffect:", error);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             // Load events from API
+    //             await loadEvents("calendarioEventosPrueba");   
+    //         } catch (error) {
+    //             console.error("Error in useEffect:", error);
     
-                // Handle Axios errors with status code 400
-                if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
-                    // Handle the 400 status code error here
-                    console.log("Request failed with status code 400:", error.response.data);
-                }
-            }
-        };
+    //             // Handle Axios errors with status code 400
+    //             if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
+    //                 // Handle the 400 status code error here
+    //                 console.log("Request failed with status code 400:", error.response.data);
+    //             }
+    //         }
+    //     };
     
-        fetchData()
-    }, []);
+    //     fetchData()
+    // }, []);
 
     //Register the eventItems object when event is created or edited or deleted
-    useEffect(() => {
-        if(eventTransaction){
-            refreshEventData();
-        }
-    }
-    , [eventTransaction]);
+    // useEffect(() => {
+    //     if(eventTransaction){
+    //         refreshEventData();
+    //     }
+    // }
+    // , [eventTransaction]);
 
     //Update all the times when the eventItems state is updated
-    useEffect(() => {
+    // useEffect(() => {
 
-        getNotifications();
-    }, [eventItems]);
+    //     getNotifications();
+    // }, [eventItems]);
 
     return (
         <DataContext.Provider value={{
@@ -167,7 +175,8 @@ const DataProvider = ({ children }) => {
             eventTransaction,
             setEventTransaction,
             refreshEventData,
-            setAllEventsDeleted
+            setAllEventsDeleted,
+            userDatabaseID,
         }}>
             {children}
         </DataContext.Provider>
