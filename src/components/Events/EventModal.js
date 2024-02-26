@@ -8,6 +8,7 @@ import EventModalTop from "./EventModalTop";
 import EventModalBody from "./EventModalBody";
 import useData from "../../hooks/useData";
 import { u } from "react-native-big-calendar";
+import { useAuth } from "../../hooks/useAuth";
 
 //Window Dimensions
 const WIDTH = Dimensions.get("window").width - 70;
@@ -21,12 +22,12 @@ const EventModal = ({
   isModalVisible,
   selectedEvent,
 }) => {
-  const { userDatabaseID } = useData();
+  const { auth } = useAuth();
 
   const [eventData, setEventData] = useState({
     title: "",
     description: "",
-    userId: userDatabaseID,
+    userId: auth.userId,
     initialHour: new Date(),
     finalHour: new Date(),
     initialHourText: "Seleccionar hora",
@@ -126,7 +127,7 @@ const EventModal = ({
       if (new Date(initialHour).getTime() < new Date(finalHour).getTime()) {
         const newEvent = {
           name: title,
-          userId: userDatabaseID,
+          userId: auth.userId,
           description,
           initialHour: initialHourToString,
           finalHour: finalHourToString,
@@ -141,7 +142,7 @@ const EventModal = ({
         // Reset values
         const resetEventData = {
           title: "",
-          userId: userDatabaseID,
+          userId: auth.userId,
           description: "",
           initialHour: new Date(),
           finalHour: new Date(),

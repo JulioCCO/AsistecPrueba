@@ -18,16 +18,16 @@ const LoginScreen= () => {
     const navigation = useNavigation();
 
     const handleClick = async() => {
-        const response = await axios.post("http://192.168.1.144:4000/api/users", {name, email, password});
-
-        if(!response.data.hasOwnProperty("msg")) {
-            alert(response.data["succes"]);
+        try {
+            const response = await axios.post("http://192.168.1.144:4000/api/users", {name, email, password});
+            
+            alert(response.data.msg);
             setName("");
             setEmail("");
             setPassword("");
             navigation.navigate("Login");
-        } else {
-            alert(response.data["msg"]);
+        } catch (error) {
+            alert(error.response?.data.msg);
         }
     }
 

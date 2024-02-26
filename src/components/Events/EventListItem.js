@@ -21,7 +21,7 @@ const EventListItem = ({item}) => {
 
     useEffect(() => {
         calculatePercentageColor()
-    }, [])
+    }, [item])
 
     return (
         <View style={styles.container}>

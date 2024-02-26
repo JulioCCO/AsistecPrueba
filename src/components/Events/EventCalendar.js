@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { FlatList, View, Text, StyleSheet } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
@@ -66,6 +66,11 @@ const EventCalendar = ({
   const [selectedDayEvents, setSelectedDayEvents] = useState(new Date());
   const [unselectedEvent, setUnselectedEvent] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [calendarItemsKey, setCalendarItemsKey] = useState(0);
+
+  useEffect(() => {
+    setCalendarItemsKey(prevKey => prevKey + 1);
+  }, [eventCalendarItems]);
 
   const sortData = (data) => {
     try {
@@ -97,8 +102,11 @@ const EventCalendar = ({
     }
   };
 
+  if(eventCalendarItems === undefined) return;
+
+
   return (
-    <>
+    <View key={calendarItemsKey}>
       <Calendar
         onDayPress={(day) => {
           setDaySelected(day.dateString);
@@ -213,7 +221,7 @@ const EventCalendar = ({
           setSelectedEvent={setSelectedEvent}
         />
       )}
-    </>
+    </View>
   );
 };
 

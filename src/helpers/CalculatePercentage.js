@@ -13,7 +13,7 @@ export const calculatePercentage = (date) => {
         // If the date is more than 20 days away, set it to 19 so that the percentage doesn't exceed 100%
         days = 19;
     }
-    
+
     // Calculate the percentage of time that has passed, based on a maximum of 20 days
     const percentageChange = Math.abs(1 - ((days / 20)).toFixed(2));
     if (percentageChange > 0.75) {
