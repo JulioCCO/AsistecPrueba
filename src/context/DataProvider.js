@@ -77,7 +77,8 @@ const DataProvider = ({ children }) => {
                     await deleteEvents(userDatabaseID);
                 }
                 
-            } else if( await getEvents(userDatabaseID) === null) {
+            } 
+            else if( await getEvents(userDatabaseID) === null) {
                 console.log("registering: ", eventItems);
                 //when the user has no events on the database and have to create a new document
                 await registerEvents(eventItems, userDatabaseID);
