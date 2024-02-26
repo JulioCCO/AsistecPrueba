@@ -5,9 +5,7 @@ import { View, TouchableOpacity, Dimensions, StyleSheet } from "react-native";
 import moment from "moment";
 import { idGenerator } from "../../helpers/IdGenerator";
 import EventModalTop from "./EventModalTop";
-import EventModalBody from "./EventModalBody";
-import useData from "../../hooks/useData";
-import { u } from "react-native-big-calendar";
+import EventModalBody from "./EventModalBody"
 import { useAuth } from "../../hooks/useAuth";
 
 //Window Dimensions
@@ -136,8 +134,12 @@ const EventModal = ({
           reminder: selectedReminder,
           reminderText: reminderValues[selectedReminder - 1].value,
           isAllDay,
-          date: daySelected,
+          date: daySelected
         };
+
+        if(selectedEvent) {
+          newEvent._id = selectedEvent["_id"]
+        }
 
         // Reset values
         const resetEventData = {
@@ -159,7 +161,7 @@ const EventModal = ({
         setEventData(resetEventData);
         closeModal();
         if (selectedEvent !== null) {
-          handleEditEvent(newEvent, newEvent.id);
+          handleEditEvent(newEvent);
         } else handleCreateEvent(newEvent);
       } else {
         alert("La hora de inicio debe ser menor a la hora final");

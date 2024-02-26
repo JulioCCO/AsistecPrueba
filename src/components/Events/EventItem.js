@@ -1,7 +1,6 @@
-import React, { useMemo} from "react";
-
-import { 
-    View, 
+import React, { useEffect } from "react";
+import {
+    View,
     Text,
     TouchableOpacity,
     TextInput,
@@ -9,9 +8,7 @@ import {
 } from "react-native";
 import { ProgressBar } from "react-native-paper";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
 import moment from "moment";
-
 import { calculatePercentage } from "../../helpers/CalculatePercentage";
 
 const spanishWeekDays = {
@@ -23,21 +20,21 @@ const spanishWeekDays = {
     "Fri": "Vie",
     "Sat": "Sáb"
 }
-      
-const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelectedEvent}) => {
-    const day = useMemo(() => moment(selectedDayEvents).format("ddd"), [
-        selectedDayEvents,
-    ]);
 
-    const percentageColorObject = useMemo(() => calculatePercentage(itemInfo.date), [
-    itemInfo.date,
-    ]);
+const EventItem = ({ itemInfo, selectedDayEvents, changeModalVisible, setSelectedEvent }) => {
+    const day = moment(selectedDayEvents).format("ddd");
+    const percentageColorObject = calculatePercentage(itemInfo.date);
 
     const handleEditEvent = () => {
-    setSelectedEvent(itemInfo);
-    changeModalVisible();
+        setSelectedEvent(itemInfo);
+        changeModalVisible();
     };
-  
+
+    useEffect(() => {
+        console.log("item info")
+        console.log(itemInfo)
+    }, [itemInfo])
+
     return (
         <>
 
@@ -50,7 +47,7 @@ const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelected
                     <View>
                         <Text style={styles.dateText}>
                             {spanishWeekDays[day]}
-                        </Text>        
+                        </Text>
                         <View style={styles.dateBackground}>
                             <Text style={styles.dateNumber}>
                                 {moment(selectedDayEvents).date()}
@@ -60,25 +57,25 @@ const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelected
                     </View>
 
                     <View style={styles.progressBarContainer}>
-                        <ProgressBar 
-                            progress={percentageColorObject.percentage} 
+                        <ProgressBar
+                            progress={percentageColorObject.percentage}
                             color={percentageColorObject.color}
-                            style={styles.progressBar} 
+                            style={styles.progressBar}
                         />
                         <Text style={styles.name}>{itemInfo.name}</Text>
                     </View>
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                     onPress={handleEditEvent}>
-                    <Ionicons 
-                        name="pencil" size={30} 
-                        color="black"/>
+                    <Ionicons
+                        name="pencil" size={30}
+                        color="black" />
                 </TouchableOpacity>
             </View>
 
-            <View style={{paddingHorizontal: 20}}>
-                <View style={{marginVertical: 10, gap: 5}}>
+            <View style={{ paddingHorizontal: 20 }}>
+                <View style={{ marginVertical: 10, gap: 5 }}>
                     <Text>Hora inicial: {itemInfo.initialHourText}</Text>
                     <Text>Hora final: {itemInfo.finalHourText}</Text>
                 </View>
@@ -92,22 +89,22 @@ const EventItem = ({itemInfo, selectedDayEvents, changeModalVisible, setSelected
                 />
             </View>
         </>
-      );
-    };
+    );
+};
 
 const styles = StyleSheet.create({
     topContainer: {
-        paddingHorizontal: 20, 
+        paddingHorizontal: 20,
         marginHorizontal: 5,
         marginVertical: 20,
-        borderRadius: 10, 
-        flexDirection: "row", 
+        borderRadius: 10,
+        flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
     },
 
     dateText: {
-        fontSize: 15, 
+        fontSize: 15,
         textAlign: "center",
         color: "#8FC1A9"
     },
@@ -118,7 +115,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         justifyContent: "center",
-        alignItems: "center",                    
+        alignItems: "center",
     },
 
     dateNumber: {
@@ -135,21 +132,21 @@ const styles = StyleSheet.create({
         maxWidth: "60%"
     },
 
-    progressBar: { 
+    progressBar: {
         height: 10,
         borderRadius: 10,
         maxWidth: "100%"
     },
 
     name: {
-        fontWeight: "600", 
-        fontSize: 15, 
+        fontWeight: "600",
+        fontSize: 15,
         alignSelf: "flex-start"
     },
 
     descriptionText: {
-        color: "#5B83B0", 
-        marginTop: 10, 
+        color: "#5B83B0",
+        marginTop: 10,
         marginBottom: 3
     },
 
@@ -160,7 +157,6 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
         backgroundColor: "#FAF3DD"
     }
-
 })
 
 export default EventItem;

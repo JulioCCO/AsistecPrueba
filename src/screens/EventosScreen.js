@@ -20,77 +20,47 @@ const EventosScreen = () => {
   const [daySelected, setDaySelected] = useState(moment().format("YYYY-MM-DD"));
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [itemInfo, setItemInfo] = useState({});
-  const {eventItems, setEventItems} = useData();
+  const { eventItems, setEventItems } = useData();
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [newEvent, setNewEvent] = useState({});
-  //Function to refresh the notifications, events and components
-  const { getNotifications, refreshEventData, setEventTransaction, setAllEventsDeleted } = useData();
 
-  const { events, addEvent } = useEvent()
-
-  useEffect(() => {
-    if (showNotification) {
-      setShowNotification(false);
-    }
-  }, [showNotification, events]);
+  const { addEvent, editEvent } = useEvent()
 
   const changeModalVisible = () => {
-    if(isModalVisible) {
+    if (isModalVisible) {
       setSelectedEvent(null);
     }
     setIsModalVisible(!isModalVisible);
   }
 
-
-  const handleCreateEvent= (event) => {
+  const handleCreateEvent = (event) => {
+    addEvent(event)
     /* This is because eventItems has {"init": "init"} 
     when it's created to avoid visual bug
     */
-    addEvent(event)
-      if(eventItems[0].init === "init") {
-        setEventItems([event])
-      }else {
-        setEventItems([...eventItems,event])
-      }
+    if (eventItems[0].init === "init") {
+      setEventItems([event])
+    } else {
+      setEventItems([...eventItems, event])
+    }
     setNewEvent(event);
-    setEventTransaction(true);
+    (true);
     setShowNotification(true);
   }
 
-  
-  const handleEditEvent = (eventEdited, eventId) => {
-
-    // Create a new array with the edited event
-    setEventItems(prevArray=> {
-      return prevArray.map(event => {
-        if(event.id === eventId) {
-          return eventEdited;
-        } else {
-          return event;
-        }
-
-      })
-    })
-    setNewEvent(eventEdited);
-    setEventTransaction(true);
-    setShowNotification(true);
-    setItemInfo(eventEdited);
+  const handleEditEvent = (eventEdited) => {
+    editEvent(eventEdited)
   }
-   
+
   const handleDeleteEvent = (item) => {
     const newItemsArray = eventItems.filter(event => event.name != item.name);
 
-    if(newItemsArray.length === 0) {
-        setEventItems([{"init": "init"}]);
-        setAllEventsDeleted(true);
-        setEventTransaction(true);
+    if (newItemsArray.length === 0) {
+      setEventItems([{ "init": "init" }]);
     } else {
       setEventItems(newItemsArray)
-      setEventTransaction(true);
     }
-    getNotifications();
-    refreshEventData();
   }
 
   return (
@@ -107,7 +77,6 @@ const EventosScreen = () => {
       <EventCalendar
         daySelected={daySelected}
         setDaySelected={setDaySelected}
-        eventCalendarItems={events}
         changeModalVisible={changeModalVisible}
         setSelectedEvent={setSelectedEvent}
         itemInfo={itemInfo}
