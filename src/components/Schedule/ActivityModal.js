@@ -1,4 +1,11 @@
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Modal } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Modal,
+} from "react-native";
 import React, { useState } from "react";
 
 import { Input } from "react-native-elements";
@@ -8,8 +15,8 @@ import moment from "moment";
 import Icon from "react-native-vector-icons/Ionicons";
 import HandlerActivity from "../../helpers/HandlerActivity";
 import { ColorModal } from "./ColorModal";
-
-
+import { useAuth } from "../../hooks/useAuth";
+import { useActivity } from "../../hooks/useActivity";
 const ActivityModal = ({
   changeModalVisible,
   setActivityType,
@@ -22,13 +29,29 @@ const ActivityModal = ({
   HEIGHT,
   DAYS_OF_WEEK,
   listaComponents,
-  setListaComponents,
   ultimoId,
   setUltimoId,
   ultimoIdRelacion,
   setUltimoIdRelacion,
-  isModalVisible
+  isModalVisible,
 }) => {
+  const { auth } = useAuth();
+  const {addActivity} = useActivity();
+  const handlerSaveActivity= (activity, ultimoLista) =>{
+    object = {
+      idRelacion: activity.idRelacion,
+      start: new Date(activity.start),
+      end: new Date (activity.end),
+      title: activity.title,
+      description: activity.description,
+      modalityType: activity.modalityType,
+      color: activity.color,
+      type: "Actividad",
+      day: activity.day,
+      userId: auth.userId,
+    }
+    addActivity(object, ultimoLista);
+  }
   // Define state variables with their initial values
   const [activityName, setActivityName] = useState("");
   const [description, setDescription] = useState("");
@@ -50,8 +73,8 @@ const ActivityModal = ({
 
   const [selectedDays, setSelectedDays] = useState([]);
   const [Days, setDays] = useState([]);
-  // state for color picker  
-  const [color, setColor] = useState('#FFFF00');
+  // state for color picker
+  const [color, setColor] = useState("#FFFF00");
   const [modalColorState, setModalColorState] = useState(false);
 
   const changeModalColorVisible = () => {
@@ -117,23 +140,24 @@ const ActivityModal = ({
   const onFinalDateChange = (event, selectedDate) => {
     setShowFinalDate(false);
     const currentDate = selectedDate || finalDate;
-    const formatedDate = moment(selectedDate || finalDate).format(
-      "YYYY-MM-DD"
-    );
+    const formatedDate = moment(selectedDate || finalDate).format("YYYY-MM-DD");
     setFinalDate(currentDate);
     setFinalDateText(formatedDate);
   };
 
   // Function that closes the modal
-  const OnCreateActivity = () => { //cambiar por onCreateActivity
+  const OnCreateActivity = () => {
+    //cambiar por onCreateActivity
 
     if (
-      [activityName,
+      [
+        activityName,
         description,
         initialHour,
         finalHour,
         initialDate,
-        finalDate].includes("") ||
+        finalDate,
+      ].includes("") ||
       selectedDays.length === 0
     ) {
       alert("Por favor llena todos los espacios");
@@ -141,15 +165,26 @@ const ActivityModal = ({
     } else if (finalDate < initialDate) {
       alert("La fecha final  inicia antes que la fecha inicial");
       return;
-
     } else if (finalHour <= initialHour) {
       alert("La hora final inicia o es igual que la hora inicial");
       return;
     } else {
-      HandlerActivity({
-        initialDate, finalDate, activityName, modalityType, description,
-        initialHour, finalHour, Days, listaComponents, setListaComponents,
-        ultimoId, setUltimoId, ultimoIdRelacion, setUltimoIdRelacion, color
+    HandlerActivity({
+        initialDate,
+        finalDate,
+        activityName,
+        modalityType,
+        description,
+        initialHour,
+        finalHour,
+        Days,
+        listaComponents,
+        ultimoId,
+        setUltimoId,
+        ultimoIdRelacion,
+        setUltimoIdRelacion,
+        color,
+        handlerSaveActivity,
       });
       setActivityName("");
       setDescription("");
@@ -169,14 +204,14 @@ const ActivityModal = ({
     if (index == 6) {
       indexPersonal = 0;
     } else {
-      indexPersonal = index + 1
+      indexPersonal = index + 1;
     }
     if (Days.includes(indexPersonal)) {
       const nuevaLista = Days.filter((item) => item !== indexPersonal);
       setDays(nuevaLista);
     } else {
       selectDays.push(indexPersonal);
-      setDays(Days.concat(selectDays))
+      setDays(Days.concat(selectDays));
     }
     // Create a copy of the days of week array
     const updatedDays = [...DAYS_OF_WEEK];
@@ -184,20 +219,20 @@ const ActivityModal = ({
     updatedDays[index].selected = !updatedDays[index].selected;
     // Update the selected days state variable with the selected days only
     setSelectedDays(updatedDays.filter((day) => day.selected));
-
-
   };
 
   const closeModal = () => {
-    changeModalVisible()
-  }
+    changeModalVisible();
+  };
   return (
     // Modal
-    <TouchableOpacity disabled={true}
+    <TouchableOpacity
+      disabled={true}
       style={{
         ...styles.container,
         backgroundColor: isModalVisible ? "rgba(0,0,0,0.4)" : "transparent", // Cambia el fondo a oscuro cuando el modal está abierto
-      }}>
+      }}
+    >
       {/* Modal content */}
       <View style={{ ...styles.modal, height: HEIGHT, width: WIDTH }}>
         {/* Modal header */}
@@ -396,11 +431,19 @@ const ActivityModal = ({
           </View>
           {/* Select color */}
           <Text style={{ ...styles.text, marginTop: 20 }}>Color elegido</Text>
-          <Text style={{ marginTop: 20, backgroundColor: color, marginBottom: 0, borderRadius: 10 }}></Text>
+          <Text
+            style={{
+              marginTop: 20,
+              backgroundColor: color,
+              marginBottom: 0,
+              borderRadius: 10,
+            }}
+          ></Text>
           {/* Color button */}
           <TouchableOpacity
             onPress={changeModalColorVisible}
-            style={styles.colorButton}>
+            style={styles.colorButton}
+          >
             <Text
               style={{
                 color: "white",
@@ -412,7 +455,10 @@ const ActivityModal = ({
             </Text>
           </TouchableOpacity>
           {/* Create button */}
-          <TouchableOpacity onPress={OnCreateActivity} style={styles.createButton}>
+          <TouchableOpacity
+            onPress={OnCreateActivity}
+            style={styles.createButton}
+          >
             <Text
               style={{
                 color: "white",
@@ -545,7 +591,6 @@ const styles = StyleSheet.create({
     //position: "absolute",
     bottom: -10,
     right: -160,
-
   },
   colorButton: {
     backgroundColor: "#769ECB",
@@ -559,7 +604,6 @@ const styles = StyleSheet.create({
     bottom: -10,
     right: 0,
     top: 73,
-
   },
 });
 

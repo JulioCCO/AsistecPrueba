@@ -72,7 +72,6 @@ const ModalControls = ({ changeModalVisible, listaComponents, setListaComponents
                     HEIGHT={HEIGHT}
                     DAYS_OF_WEEK={DAYS_OF_WEEK}
                     listaComponents={listaComponents} 
-                    setListaComponents={setListaComponents}
                     ultimoId={ultimoId}
                     setUltimoId={setUltimoId}
                     ultimoIdRelacion={ultimoIdRelacion}

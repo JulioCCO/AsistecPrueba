@@ -6,12 +6,12 @@ import { calculateTimingNotification } from "../helpers/calculateTimingNotificat
 import { formatTime } from "../helpers/formatTime";
 
 import {fetchEvents, updateEvents, registerEvents, deleteEvents} from "../api/events";
-
+import {fetchActivities, updateActivity,createActivity, removeActivity} from "../api/schedule";
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
     const [eventItems, setEventItems] = useState([{"init": "init"}] );
-    const [listaComponents, setListaComponents] = useState([]);
+    const [listaComponents, setListaComponents] = useState([]); //se utiliza para schedule
     const [notifications, setNotifications] = useState([]);
     const [eventTransaction, setEventTransaction] = useState(false);
     const [userDatabaseID, setUserDatabaseID] = useState("calendarioEventosPrueba");
