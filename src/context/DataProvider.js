@@ -5,13 +5,13 @@ import moment from "moment";
 import { calculateTimingNotification } from "../helpers/calculateTimingNotification";
 import { formatTime } from "../helpers/formatTime";
 
-import {getEvents, updateEvents, registerEvents, deleteEvents} from "../api/events";
-
+import {fetchEvents, updateEvents, registerEvents, deleteEvents} from "../api/events";
+import {fetchActivities, updateActivity,createActivity, removeActivity} from "../api/schedule";
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
     const [eventItems, setEventItems] = useState([{"init": "init"}] );
-    const [listaComponents, setListaComponents] = useState([]);
+    const [listaComponents, setListaComponents] = useState([]); //se utiliza para schedule
     const [notifications, setNotifications] = useState([]);
     const [eventTransaction, setEventTransaction] = useState(false);
     const [userDatabaseID, setUserDatabaseID] = useState("calendarioEventosPrueba");
@@ -67,33 +67,34 @@ const DataProvider = ({ children }) => {
 
     }
 
-    const refreshEventData = async () => {
-        try {
-            console.log("refreshing data")
-            if(eventItems["init"]) {
-                if(allEventsDeleted) {
-                    console.log("deleting: ", eventItems);
-                    //when the user is deleting the only event that he has on the database
-                    await deleteEvents(userDatabaseID);
-                }
+    // const refreshEventData = async () => {
+    //     try {
+    //         console.log("refreshing data")
+    //         if(eventItems["init"]) {
+    //             if(allEventsDeleted) {
+    //                 console.log("deleting: ", eventItems);
+    //                 //when the user is deleting the only event that he has on the database
+    //                 await deleteEvents(userDatabaseID);
+    //             }
                 
-            } else if( await getEvents(userDatabaseID) === null) {
-                console.log("registering: ", eventItems);
-                //when the user has no events on the database and have to create a new document
-                await registerEvents(eventItems, userDatabaseID);
-            }
+    //         } 
+    //         else if( await fetchEvents(userDatabaseID) === null) {
+    //             console.log("registering: ", eventItems);
+    //             //when the user has no events on the database and have to create a new document
+    //             await registerEvents(eventItems, userDatabaseID);
+    //         }
 
-            else {
-                console.log("refreshing: ", eventItems);
-                //whe the user has events on the database and wants to add a new one or edit one
-                await updateEvents(eventItems, userDatabaseID);
-            }
-        } catch (error) {
-            console.error('Error registering event:', error);
-        }
-        setEventTransaction(false);
-        setAllEventsDeleted(false);
-    };
+    //         else {
+    //             console.log("refreshing: ", eventItems);
+    //             //whe the user has events on the database and wants to add a new one or edit one
+    //             await updateEvents(eventItems, userDatabaseID);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error registering event:', error);
+    //     }
+    //     setEventTransaction(false);
+    //     setAllEventsDeleted(false);
+    // };
 
     const createEvent = async (event) => {
         try {
@@ -109,7 +110,7 @@ const DataProvider = ({ children }) => {
             console.log("Loading events...");
 
             // Get events from API with the user id
-            const events = await getEvents(userId);
+            const events = await fetchEvents(userId);
 
             // Check if events is not null
             if (events !== null) {
@@ -174,7 +175,7 @@ const DataProvider = ({ children }) => {
             notifications,
             eventTransaction,
             setEventTransaction,
-            refreshEventData,
+            // refreshEventData,
             setAllEventsDeleted,
             userDatabaseID,
         }}>

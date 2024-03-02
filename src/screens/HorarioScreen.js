@@ -8,8 +8,7 @@ import EditControls from "../components/Schedule/Edit/EditModalControls";
 import { DeleteModalControls } from "../components/Schedule/Delete/DeleteModalControls";
 import useData from "../hooks/useData";
 import { Calendar } from "react-native-big-calendar";
-
-
+import {useActivity} from "../hooks/useActivity";
 const HorarioScreen = () => {
   const { ultimoId, setUltimoId } = useData(0); // Ultimo id de la lista de componentes
   const { ultimoIdRelacion, setUltimoIdRelacion } = useData(0); // Ultimo id de la lista de componentes
@@ -35,7 +34,7 @@ const HorarioScreen = () => {
 
   // Variables para obtener las fechas
   const { listaComponents, setListaComponents } = useData([]); // Array para almacenar la lista de componentes
-
+  const {scheduleElements} = useActivity(); // Array para almacenar la lista de componentes
   // Funciones para mostrar modals de: Agregar, Editar y Eliminar
   const changeModalVisible = () => {
     setIsModalVisible(!isModalVisible);
@@ -80,6 +79,9 @@ const HorarioScreen = () => {
     };
   }, [DeleteMessageVisible, typeExitMessageDelete]);
 
+  if(scheduleElements === undefined){
+    return;
+  }
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -122,7 +124,7 @@ const HorarioScreen = () => {
           },
         }}
         activeDate={new Date()}
-        events={listaComponents}
+        events={scheduleElements}
         showTime={true}
         height={600}
         mode={viewMode}
@@ -264,8 +266,6 @@ const HorarioScreen = () => {
           event={objectEvento}
           setTypeExitMessageDelete={setTypeExitMessageDelete}
           editRelationComponent={deleteRelationComponent}
-          listaComponents={listaComponents}
-          setListaComponents={setListaComponents}
           changeOpenDeletetModal={changeOpenDeletetModal}
           openDeleteModal={openDeleteModal}
         />

@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import EventListItem from "./EventListItem";
+import { useEvent } from "../../hooks/useEvent";
 
 const Agenda = ({
-    item, isDeleting, setIsDeleting, setUnselectedEvent, 
-    setSelectedDayEvents, itemInfo, setItemInfo, handleDeleteEvent}) => {
-    
-    const [selectedEventName, setSelectedEventName] = useState("");
+  item, isDeleting, setIsDeleting, setUnselectedEvent,
+  setSelectedDayEvents, itemInfo, setItemInfo }) => {
 
-    const handleDelete = (item) => {
-        handleDeleteEvent(item);
-        setIsDeleting(false);
-    }
+  const [selectedEventName, setSelectedEventName] = useState("");
+  const { deleteEvent } = useEvent();
+
+  const handleDelete = (eventId) => {
+    deleteEvent(eventId)
+    setIsDeleting(false);
+  }
 
   const handleLongPress = (item) => {
     setIsDeleting(true);
@@ -35,7 +37,7 @@ const Agenda = ({
         }}
       >
         {isDeleting && itemInfo["name"] === selectedEventName ? (
-          <TouchableOpacity onPress={() => handleDelete(item)}>
+          <TouchableOpacity onPress={() => handleDelete(item["_id"])}>
             <View
               style={styles.deleteButton}
             >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { FlatList, View, Text, StyleSheet } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
@@ -8,6 +8,7 @@ import moment from "moment";
 import EventItem from "./EventItem";
 
 import Agenda from "./Agenda";
+import { useEvent } from "../../hooks/useEvent";
 
 // Setting up the calendar in Spanish
 LocaleConfig.locales["es"] = {
@@ -56,7 +57,6 @@ LocaleConfig.defaultLocale = "es";
 const EventCalendar = ({
   daySelected,
   setDaySelected,
-  eventCalendarItems,
   changeModalVisible,
   setSelectedEvent,
   itemInfo,
@@ -66,6 +66,13 @@ const EventCalendar = ({
   const [selectedDayEvents, setSelectedDayEvents] = useState(new Date());
   const [unselectedEvent, setUnselectedEvent] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [calendarItemsKey, setCalendarItemsKey] = useState(0);
+
+  const { events } = useEvent()
+
+  useEffect(() => {
+    setCalendarItemsKey(prevKey => prevKey + 1);
+  }, [events]);
 
   const sortData = (data) => {
     try {
@@ -97,8 +104,11 @@ const EventCalendar = ({
     }
   };
 
+  if(events === undefined) return;
+
+
   return (
-    <>
+    <View key={calendarItemsKey}>
       <Calendar
         onDayPress={(day) => {
           setDaySelected(day.dateString);
@@ -106,7 +116,7 @@ const EventCalendar = ({
           setIsDeleting(false);
         }}
         markingType={"custom"}
-        markedDates={eventCalendarItems.reduce((obj, event) => {
+        markedDates={events.reduce((obj, event) => {
           obj[event.date] = {
             marked: true,
           };
@@ -147,7 +157,7 @@ const EventCalendar = ({
         }}
       />
       {unselectedEvent ? (
-        filterData(eventCalendarItems) ? (
+        filterData(events) ? (
           <View style={{ flexDirection: "row", paddingHorizontal: 5 }}>
             {/* Display the day of the month */}
             <View style={{ paddingTop: 12 }}>
@@ -179,7 +189,7 @@ const EventCalendar = ({
             >
               <FlatList
                 style={{ height: "80%", flexDirection: "column" }}
-                data={sortData(eventCalendarItems)}
+                data={sortData(events)}
                 renderItem={({ item }) => {
                   return (
                     <Agenda
@@ -190,7 +200,6 @@ const EventCalendar = ({
                       setSelectedDayEvents={setSelectedDayEvents}
                       itemInfo={itemInfo}
                       setItemInfo={setItemInfo}
-                      handleDeleteEvent={handleDeleteEvent}
                     />
                   );
                 }}
@@ -213,7 +222,7 @@ const EventCalendar = ({
           setSelectedEvent={setSelectedEvent}
         />
       )}
-    </>
+    </View>
   );
 };
 

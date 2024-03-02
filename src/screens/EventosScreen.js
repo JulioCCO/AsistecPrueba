@@ -13,113 +13,55 @@ import EventModal from "../components/Events/EventModal";
 import EventCalendar from "../components/Events/EventCalendar";
 import PushNotification from "../components/Notification/PushNotification";
 import useData from "../hooks/useData";
-import { set } from "date-fns";
+import { useEvent } from "../hooks/useEvent";
 
 
 const EventosScreen = () => {
   const [daySelected, setDaySelected] = useState(moment().format("YYYY-MM-DD"));
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [itemInfo, setItemInfo] = useState({});
-  const {eventItems, setEventItems} = useData();
+  const { eventItems, setEventItems } = useData();
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [newEvent, setNewEvent] = useState({});
-  //Function to refresh the notifications, events and components
-  const { getNotifications, refreshEventData, setEventTransaction, setAllEventsDeleted } = useData();
 
-  useEffect(() => {
-    if (showNotification) {
-      setShowNotification(false);
-    }
-  }, [showNotification]);
+  const { addEvent, editEvent } = useEvent()
 
   const changeModalVisible = () => {
-    if(isModalVisible) {
+    if (isModalVisible) {
       setSelectedEvent(null);
     }
     setIsModalVisible(!isModalVisible);
   }
 
-  useEffect(() => {
-    console.log("eventItems: ", eventItems);
-  }, [eventItems]);
-
-
-  const handleCreateEvent= (event) => {
-    // const eventDate = Object.keys(event)[0];
-    // const eventsDates = Object.keys(eventItems);
-
+  const handleCreateEvent = (event) => {
+    addEvent(event)
     /* This is because eventItems has {"init": "init"} 
     when it's created to avoid visual bug
     */
-      if(eventItems[0].init === "init") {
-        setEventItems([event])
-      }else {
-        setEventItems([...eventItems,event])
-      }
-    
-      
-    // // If there is already an event on the selected date, the new event is added.
-    // if(eventsDates.includes(eventDate) && selectedEvent === null) {
-    //   setEventItems({...eventItems, [eventDate] : [...eventItems[eventDate], event[eventDate][0]]});
-    //   setNewEvent(event[eventDate][0]);
-    //   setEventTransaction(true);
-    //   setShowNotification(true);
-    // }
-
-    // // If there is already an event on the selected date and it is being edited, the event is updated.
-    // else if(eventsDates.includes(eventDate) && selectedEvent !== null) {
-    //   handleEditEvent(event, oldName, eventItems, eventDate);
-    // } else {
-    //   setEventItems({...eventItems, [eventDate] : event[eventDate]});
+    if (eventItems[0].init === "init") {
+      setEventItems([event])
+    } else {
+      setEventItems([...eventItems, event])
+    }
     setNewEvent(event);
-    setEventTransaction(true);
+    (true);
     setShowNotification(true);
-
-    // }
   }
 
-  
-  const handleEditEvent = (eventEdited, eventId) => {
-
-    // Create a new array with the edited event
-    setEventItems(prevArray=> {
-      return prevArray.map(event => {
-        if(event.id === eventId) {
-          return eventEdited;
-        } else {
-          return event;
-        }
-
-      })
-    })
-    setNewEvent(eventEdited);
-    setEventTransaction(true);
-    setShowNotification(true);
+  const handleEditEvent = (eventEdited) => {
+    editEvent(eventEdited)
     setItemInfo(eventEdited);
   }
-   
+
   const handleDeleteEvent = (item) => {
-
-    console.log("handleDeleteEvent")
-
-
-
     const newItemsArray = eventItems.filter(event => event.name != item.name);
-    console.log("newItemsArray: ", newItemsArray);
 
-
-    if(newItemsArray.length === 0) {
-     
-        setEventItems([{"init": "init"}]);
-        setAllEventsDeleted(true);
-        setEventTransaction(true);
+    if (newItemsArray.length === 0) {
+      setEventItems([{ "init": "init" }]);
     } else {
       setEventItems(newItemsArray)
-      setEventTransaction(true);
     }
-    getNotifications();
-    refreshEventData();
   }
 
   return (
@@ -136,7 +78,6 @@ const EventosScreen = () => {
       <EventCalendar
         daySelected={daySelected}
         setDaySelected={setDaySelected}
-        eventCalendarItems={eventItems}
         changeModalVisible={changeModalVisible}
         setSelectedEvent={setSelectedEvent}
         itemInfo={itemInfo}
