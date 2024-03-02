@@ -8,7 +8,7 @@ import { useEvent } from "../../hooks/useEvent";
 
 const Agenda = ({
   item, isDeleting, setIsDeleting, setUnselectedEvent,
-  setSelectedDayEvents, itemInfo, setItemInfo, handleDeleteEvent }) => {
+  setSelectedDayEvents, itemInfo, setItemInfo }) => {
 
   const [selectedEventName, setSelectedEventName] = useState("");
   const { deleteEvent } = useEvent();

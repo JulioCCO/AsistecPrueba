@@ -19,7 +19,7 @@ const LoginScreen= () => {
 
     const handleClick = async() => {
         try {
-            const response = await axios.post("http://192.168.1.144:4000/api/users", {name, email, password});
+            const response = await axios.post("http://192.168.1.130:4000/api/users", {name, email, password});
             
             alert(response.data.msg);
             setName("");

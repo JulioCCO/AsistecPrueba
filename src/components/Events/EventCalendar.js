@@ -200,7 +200,6 @@ const EventCalendar = ({
                       setSelectedDayEvents={setSelectedDayEvents}
                       itemInfo={itemInfo}
                       setItemInfo={setItemInfo}
-                      handleDeleteEvent={handleDeleteEvent}
                     />
                   );
                 }}

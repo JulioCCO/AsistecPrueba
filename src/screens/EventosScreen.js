@@ -51,6 +51,7 @@ const EventosScreen = () => {
 
   const handleEditEvent = (eventEdited) => {
     editEvent(eventEdited)
+    setItemInfo(eventEdited);
   }
 
   const handleDeleteEvent = (item) => {
