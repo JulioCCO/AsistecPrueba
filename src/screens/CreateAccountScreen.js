@@ -6,6 +6,7 @@ import {
 } from "react-native";
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { SERVER_HOST_DIR } from "@env"
 
 import axios from "axios";
 
@@ -19,7 +20,7 @@ const LoginScreen= () => {
 
     const handleClick = async() => {
         try {
-            const response = await axios.post("http://192.168.1.130:4000/api/users", {name, email, password});
+            const response = await axios.post(`${SERVER_HOST_DIR}/api/users`, {name, email, password});
             
             alert(response.data.msg);
             setName("");
