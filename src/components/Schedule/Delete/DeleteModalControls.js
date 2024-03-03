@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Dimensions } from "react-native";
 import {
@@ -8,45 +7,16 @@ import {
   View,
   ScrollView,
 } from "react-native";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
-const Delete = (
-  event,
-  editRelationComponent,
-  listaComponents,
-  setListaComponents
-) => {
-  if (!editRelationComponent) {
-    const newListaComponents = listaComponents.filter(
-      (component) => component.id !== event.id
-    );
-    setListaComponents([]);
-    setListaComponents(newListaComponents);
-    return true;
-  } else {
-    //obtener los elementos no relacionados con el event.idRelation
-    var listaComponentsTemp = listaComponents.filter(
-      (item) => item.idRelacion != event.idRelacion
-    );
-    //valiar lista de componentes
-    setListaComponents([]);
-    setListaComponents(listaComponentsTemp);
-    AsyncStorage.setItem("listaComponents", JSON.stringify(listaComponentsTemp))
-    return true;
-  }
-};
+import { useActivity } from "../../../hooks/useActivity";
 
 export const DeleteModalControls = ({
   event,
   setTypeExitMessageDelete,
   editRelationComponent,
-  listaComponents,
-  setListaComponents,
   changeOpenDeletetModal,
   openDeleteModal,
 }) => {
+  const { deleteActivity, deleteActivityByRelationId } = useActivity();
   const [valid, setValid] = React.useState(false);
   const OnDeleteActivityorCourse = () => {
     setTypeExitMessageDelete(false);
@@ -55,21 +25,22 @@ export const DeleteModalControls = ({
   };
   useEffect(() => {
     if (openDeleteModal) {
-      setValid(
-        Delete(
-          event,
-          editRelationComponent,
-          listaComponents,
-          setListaComponents
-        )
-      );
+      setValid(Delete(event, editRelationComponent));
     }
   }, []);
   const WIDTH = Dimensions.get("window").width - 80;
   const HEIGHT = Dimensions.get("window").height - 620;
+  const Delete = (event, editRelationComponent) => {
+    if (!editRelationComponent) {
+      deleteActivity(event._id);
+      return true;
+    } else {
+      deleteActivityByRelationId(event.idRelacion);
+      return true;
+    }
+  };
   if (valid) {
     return (
-
       <TouchableOpacity
         disabled={true}
         style={{

@@ -1,8 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import moment from "moment";
-import { addDays, format } from "date-fns";
-
+import { add, addDays, format } from "date-fns";
 const getDates = (startDate, lastDate, horaInicio, horaFin, Days) => {
   var ListaFechas = []; // Array para almacenar la lista fechas
 
@@ -143,7 +140,6 @@ const verificarFechas = (ListaFechas, listaComponents) => {
 const agregarComponente = (
   ListaFechas,
   listaComponents,
-  setListaComponents,
   activityName,
   description,
   modalityType,
@@ -151,7 +147,8 @@ const agregarComponente = (
   setUltimoId,
   ultimoIdRelacion,
   setUltimoIdRelacion,
-  color
+  color,
+  handlerSaveActivity
 ) => {
   // Obtener el ultimo id de la lista de componentes
   var ultimoIdTemp = ultimoId;
@@ -164,8 +161,11 @@ const agregarComponente = (
     const element = ListaFechas[index]; // [fechaInicio, fechaFinal] [fechaInicio, fechaFinal]
     var daySpecific = new Date(element[0]).getDay();
     // de tipo clase
+    var ultimoLista = false;
+    if(index == ListaFechas.length - 1){
+      ultimoLista = true;
+    }
     var componente = {
-      id: ultimoIdTemp + 1,
       idRelacion: ultimoIdRelacionTemp,
       start: element[0],
       end: element[1],
@@ -176,16 +176,17 @@ const agregarComponente = (
       type: "Actividad",
       day: daySpecific,
     };
+    handlerSaveActivity(componente, ultimoLista);
     ultimoIdTemp = ultimoIdTemp + 1;
-    lista.push(componente);
   }
 
   // Actualizar el ultimo id de la lista de componentes
   setUltimoId(ultimoIdTemp);
   setUltimoIdRelacion(ultimoIdRelacionTemp);
-
-  setListaComponents(listaComponents.concat(lista));
-  AsyncStorage.setItem("listaComponents", JSON.stringify(listaComponents.concat(lista)));
+  return componente;
+//cambiar el estado de la lista de componentes
+  // setListaComponents(listaComponents.concat(lista));
+  // AsyncStorage.setItem("listaComponents", JSON.stringify(listaComponents.concat(lista)));
   
 };
 
@@ -199,13 +200,14 @@ const HandlerActivity = ({
   finalHour,
   Days,
   listaComponents,
-  setListaComponents,
   ultimoId,
   setUltimoId,
   ultimoIdRelacion,
   setUltimoIdRelacion,
-  color
+  color,
+  handlerSaveActivity,
 }) => {
+
   // Variables para obtener las fechas
   ListaFechas = getDates(
     initialDate,
@@ -214,7 +216,6 @@ const HandlerActivity = ({
     finalHour,
     Days
   );
-
   // Variable para verificar si ya existe la fecha en la lista de componentes
   var validacion = verificarFechas(ListaFechas, listaComponents);
 
@@ -225,11 +226,9 @@ const HandlerActivity = ({
       listaColores.push(componente.color);
     });
 
-    
     agregarComponente(
       ListaFechas,
       listaComponents,
-      setListaComponents,
       activityName,
       description,
       modalityType,
@@ -237,13 +236,14 @@ const HandlerActivity = ({
       setUltimoId,
       ultimoIdRelacion,
       setUltimoIdRelacion,
-      color
+      color,
+      handlerSaveActivity
       );
   } else {
     alert("Choque de horarios");
   }
-
   return;
+ 
 };
 
 export default HandlerActivity;
