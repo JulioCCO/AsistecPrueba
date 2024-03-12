@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, {useEffect} from "react";
 import { 
     View, 
     Text, 
@@ -10,14 +9,16 @@ import {
 import { ProgressBar } from "react-native-paper";
 
 import moment from "moment";
-
+import 'moment/locale/es';
 import { calculatePercentage } from "../helpers/CalculatePercentage";
-import useData from "../hooks/useData";
+import { useEvent } from "../hooks/useEvent";
 
 
 const NotificationScreen = () => {
     
-    const { notifications } = useData();
+    const { notifications } = useEvent();
+    // Set the locale to Spanish to display the abbreviated weekday name in Spanish
+    moment.locale('es');
 
     return (
         <View style={{backgroundColor: "#FFFFFF", height: "100%"}}>
@@ -30,9 +31,9 @@ const NotificationScreen = () => {
                 
                 return <View style={styles.listContainer}>
                     <View>
-                        {/* Display the abbreviated weekday name in Spanish */}
+                        {/* Display the abbreviated weekday*/}
                         <Text style={styles.dayText}>
-                            {moment(item.date).format("ddd")}
+                            {moment(item.date).format("ddd").toUpperCase()}
                         </Text>
 
                         {/* Display the day of the month */}
@@ -49,7 +50,7 @@ const NotificationScreen = () => {
 
                     <View style={styles.NotificationContainer}>
                         <TouchableOpacity 
-                            key={item["id"]}
+                            key={item["event"]["id"]}
                             style={{
                                 marginVertical: 5,
                                 width: "70%"
@@ -63,7 +64,7 @@ const NotificationScreen = () => {
                             />
 
                             {/* Display the name of the event */}
-                            <Text style={{fontSize: 15, marginBottom: 5}}>{item["name"]}</Text>
+                            <Text style={{fontSize: 15, marginBottom: 5}}>{item["event"]["name"]}</Text>
 
                             <Text style={{fontSize: 12, color: "#5B83B0"}}>Ver mas</Text>
 
