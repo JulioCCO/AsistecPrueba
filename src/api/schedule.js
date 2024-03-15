@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = 'http://192.168.0.110:4000/api/schedule'
+const API = 'http://192.168.0.112:4000/api/schedule'
 export const createActivity = async (userId, activity) => {
     try {
         const { data } = await axios.post(`${API}/registerActivity/${userId}`, activity);
