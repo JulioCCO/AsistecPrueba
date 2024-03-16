@@ -1,20 +1,55 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API = 'http://192.168.0.112:4000/api/schedule'
-export const createActivity = async (userId, activity) => {
+const API = "http://192.168.50.13:4000/api/schedule";
+
+export const createSchedule = async (userId, schedule) => {
+  try {
+    const { data } = await axios.post(
+      `${API}/registerSchedule/${userId}`,
+      schedule
+    );
+    return(data);
+
+  } catch (error) {
+    if(error.response){
+        alert(error.response?.data.msg);
+    }
+  }
+};
+
+export const getUserSchedule = async (userId) => {
     try {
-        const { data } = await axios.post(`${API}/registerActivity/${userId}`, activity);
+        const { data } = await axios.get(
+          `${API}/getSchedules/${userId}`);
         return(data);
-    } catch (error) {
-        if(error.response) {
+    
+      } catch (error) {
+        if(error.response){
             alert(error.response?.data.msg);
         }
-    }
-}
+      }
+};
 
-export const fetchActivities = async (userId) => {
+export const updateSchedule = async (userId, schedule) => {
+
     try {
-        const { data } = await axios(`${API}/getActivities/${userId}`);
+        const { data } = await axios.put(
+          `${API}/updateSchedule/${userId}`,
+          schedule
+        );
+        return(data);
+    
+      } catch (error) {
+        if(error.response){
+            alert(error.response?.data.msg);
+        }
+      }
+};
+
+// Cuando se remueve el calendario, se debe remover tambien las actividades de este.
+export const removeSchedule = async (userId, scheduleId) => {
+    try {
+        const { data } = await axios.delete(`${API}/deleteSchedule/${userId}/${scheduleId}`);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -23,34 +58,4 @@ export const fetchActivities = async (userId) => {
     }
 };
 
-export const updateActivity = async (userId, updatedActivity) => {
-    try {
-        const { data } = await axios.put(`${API}/updateActivity/${userId}`, updatedActivity);
-        return(data);
-    } catch (error) {
-        if(error.response) {
-            alert(error.response?.data.msg);
-        }
-    }
-}
 
-export const removeActivity = async (activityId, userId) => {
-    try {
-        const { data } = await axios.delete(`${API}/deleteActivity/${userId}/${activityId}`);
-        return(data);
-    } catch (error) {
-        if(error.response) {
-            alert(error.response?.data.msg);
-        }
-    }
-}
-export const removeActivityByIdRelacion = async (idRelacion, userId) => {
-    try {
-        const { data } = await axios.delete(`${API}/deleteActivitiesByRelationId/${userId}/${idRelacion}`);
-        return(data);
-    } catch (error) {
-        if(error.response) {
-            alert(error.response?.data.msg);
-        }
-    }
-}

@@ -6,7 +6,7 @@ import { calculateTimingNotification } from "../helpers/calculateTimingNotificat
 import { formatTime } from "../helpers/formatTime";
 
 import {fetchEvents, updateEvents, registerEvents, deleteEvents} from "../api/events";
-import {fetchActivities, updateActivity,createActivity, removeActivity} from "../api/schedule";
+import {fetchActivities, updateActivity,createActivity, removeActivity} from "../api/activity";
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
