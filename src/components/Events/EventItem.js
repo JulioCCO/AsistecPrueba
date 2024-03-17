@@ -30,11 +30,6 @@ const EventItem = ({ itemInfo, selectedDayEvents, changeModalVisible, setSelecte
         changeModalVisible();
     };
 
-    useEffect(() => {
-        console.log("item info")
-        console.log(itemInfo)
-    }, [itemInfo])
-
     return (
         <>
 
