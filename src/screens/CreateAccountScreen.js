@@ -6,7 +6,6 @@ import {
 } from "react-native";
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
-import { SERVER_HOST_DIR } from "@env"
 
 import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
@@ -20,7 +19,7 @@ const options = [
     { label: "Tourism", value: "tourism" }
 ];
 
-const LoginScreen = () => {
+const LoginScreen= () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { SERVER_HOST_DIR} from "@env"
 
-const API = `${SERVER_HOST_DIR}/api/events`
+const API = `http://192.168.50.13:4000/api/events`
 export const createEvent = async (userId, event) => {
     try {
         const { data } = await axios.post(`${API}/registerEvent/${userId}`, event);
