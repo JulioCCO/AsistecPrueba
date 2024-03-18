@@ -7,30 +7,37 @@ import {
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { SERVER_HOST_DIR } from "@env"
-
+import DropdownComponent from "../components/CreateAccount/DropdownComponent"
 import axios from "axios";
 
 const LoginScreen= () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [career, setCareer] = useState("");
 
     // Use the useNavigation hook to get the navigation object
     const navigation = useNavigation();
 
     const handleClick = async() => {
         try {
-            const response = await axios.post(`${SERVER_HOST_DIR}/api/users`, {name, email, password});
+            const response = await axios.post(`http://192.168.1.106:4000/api/users`, {name, email, password, career});
             
             alert(response.data.msg);
             setName("");
             setEmail("");
             setPassword("");
+            setCareer("");
             navigation.navigate("Login");
         } catch (error) {
             alert(error.response?.data.msg);
         }
     }
+
+    const handleCareer = (value) => {
+        setCareer(value)
+    }
+
 
     return (
         <View style={styles.container}>
@@ -41,7 +48,7 @@ const LoginScreen= () => {
             />
 
             {/* This view contains all inputs */}
-            <View style={{width: "80%", marginTop: "20%"}}>
+            <View style={{width: "85%", marginTop: "35%"}}>
                 <Input
                     type="text"
                     inputContainerStyle={{borderBottomWidth:0}} 
@@ -75,6 +82,9 @@ const LoginScreen= () => {
                     value={password}
                     onChange={(text) => setPassword(text.nativeEvent.text)} 
                 />
+
+                <DropdownComponent handleOnValueChange={handleCareer}  />
+
             </View>
 
             <TouchableOpacity 
@@ -93,7 +103,7 @@ const LoginScreen= () => {
                 <Text 
                     style={styles.createAccountButton}>
                     ¿Ya tienes una cuenta? {""}
-                    <Text style={{color: "black"}}>Inicia sesión</Text>
+                    <Text style={{color: "#769ECB"}}>Inicia sesión</Text>
                 </Text>
             </TouchableOpacity>
         </View>
