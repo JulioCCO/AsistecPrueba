@@ -22,7 +22,7 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
-            const direction = `http://192.168.50.13:4000/api/users/login`;
+            const direction = `http://192.168.0.113:4000/api/users/login`;
             const { data } = await axios.post(direction, { email, password });
             setAuth(data)
             setEmail("");
