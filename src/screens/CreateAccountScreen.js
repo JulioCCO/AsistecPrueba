@@ -10,6 +10,8 @@ import { SERVER_HOST_DIR } from "@env"
 import DropdownComponent from "../components/CreateAccount/DropdownComponent"
 import axios from "axios";
 
+import axios from "axios";
+const API = `http://192.168.0.113:4000/api/users`
 const LoginScreen= () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");

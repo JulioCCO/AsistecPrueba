@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { SERVER_HOST_DIR} from "@env"
 
 const API = `http://192.168.1.106:4000/api/events`
 export const createEvent = async (userId, event) => {

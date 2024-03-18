@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, SafeAreaView, View, Text, StyleSheet } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 
 import moment from "moment";
@@ -104,6 +104,84 @@ const EventCalendar = ({
     }
   };
 
+  const handleMarkedDates = (events) => {
+
+    if(events !== undefined && events.length > 0 && events[0].hasOwnProperty("init") === false){
+      return events.reduce((obj, event) => {
+        obj[event.date] = {
+          marked: true,
+        };
+        obj[daySelected] = {
+          selected: true,
+          disableTouchEvent: true,
+          selectedDotColor: "green",
+          customStyles: {
+            container: {
+              backgroundColor: "#F4F4F4",
+              borderRadius: 7,
+              borderColor: "#8FC1A9",
+              borderWidth: 1,
+            },
+            text: {
+              fontWeight: "600",
+              color: "#8FC1A9",
+            },
+          },
+        };
+        obj[moment().format("YYYY-MM-DD")] = {
+          customStyles: {
+            container: {
+              backgroundColor: "#8FC1A9",
+              borderRadius: 7,
+            },
+            text: {
+              color: "#FFFFFF",
+              fontWeight: "bold",
+            },
+          },
+        };
+        return obj;
+      }, {});
+
+    } else {
+      return {
+        [daySelected]: {
+          selected: true,
+          disableTouchEvent: true,
+          selectedDotColor: "green",
+          customStyles: {
+            container: {
+              backgroundColor: "#F4F4F4",
+              borderRadius: 7,
+              borderColor: "#8FC1A9",
+              borderWidth: 1,
+            },
+            text: {
+              fontWeight: "600",
+              color: "#8FC1A9",
+            },
+          }
+        },
+        [moment().format("YYYY-MM-DD")]: {
+          customStyles: {
+            container: {
+              backgroundColor: "#8FC1A9",
+              borderRadius: 7,
+            },
+            text: {
+              color: "#FFFFFF",
+              fontWeight: "bold",
+            },
+          },
+        },
+      };
+
+    }
+      
+    
+  }
+    
+
   if(events === undefined) return;
 
 
@@ -116,41 +194,7 @@ const EventCalendar = ({
           setIsDeleting(false);
         }}
         markingType={"custom"}
-        markedDates={events.reduce((obj, event) => {
-          obj[event.date] = {
-            marked: true,
-          };
-          obj[daySelected] = {
-            selected: true,
-            disableTouchEvent: true,
-            selectedDotColor: "green",
-            customStyles: {
-              container: {
-                backgroundColor: "#F4F4F4",
-                borderRadius: 7,
-                borderColor: "#8FC1A9",
-                borderWidth: 1,
-              },
-              text: {
-                fontWeight: "600",
-                color: "#8FC1A9",
-              },
-            },
-          };
-          obj[moment().format("YYYY-MM-DD")] = {
-            customStyles: {
-              container: {
-                backgroundColor: "#8FC1A9",
-                borderRadius: 7,
-              },
-              text: {
-                color: "#FFFFFF",
-                fontWeight: "bold",
-              },
-            },
-          };
-          return obj;
-        }, {})}
+        markedDates={handleMarkedDates(events)}
         theme={{
           arrowColor: "#8FC1A9",
           calendarBackground: "#F4F4F4",
@@ -188,7 +232,7 @@ const EventCalendar = ({
               }}
             >
               <FlatList
-                style={{ height: "80%", flexDirection: "column" }}
+                style={{maxHeight: "80%", minHeight: "80%"}}
                 data={sortData(events)}
                 renderItem={({ item }) => {
                   return (
@@ -203,7 +247,7 @@ const EventCalendar = ({
                     />
                   );
                 }}
-                keyExtractor={(item) => (item.id ? item.id.toString() : null)}
+                keyExtractor={(item, index) => (item.id ? item.id.toString() :index)}
               />
             </View>
           </View>

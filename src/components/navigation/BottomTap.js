@@ -6,6 +6,7 @@ import TabConfig from "./TabConfig";
 
 import EventosScreen from "../../screens/EventosScreen";
 import HorarioScreen from "../../screens/HorarioScreen";
+import ScheduleScreen from "../../screens/ScheduleScreen";
 import NotificationScreen from "../../screens/NotificacionScreen";
 import { ta } from "date-fns/locale";
 
@@ -22,10 +23,11 @@ export const BottomTab = () => {
         },
         tabBarActiveTintColor: "#769ECB",
         tabBarInactiveTintColor: "gray",
+
       })}
     >
       <Tab.Screen name="Eventos" component={EventosScreen} />
-      <Tab.Screen name="Horario" component={HorarioScreen} />
+      <Tab.Screen name="Horario" component={ScheduleScreen} options={{headerShown:false}} />
       <Tab.Screen name="Notificaciones" component={NotificationScreen} />
     </Tab.Navigator>
   

@@ -1,109 +1,93 @@
-import { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import {
-  createActivity,
-  fetchActivities,
-  updateActivity,
-  removeActivity,
-  removeActivityByIdRelacion,
+  createSchedule,
+  getUserSchedule,
+  updateSchedule,
+  removeSchedule,
 } from "../api/schedule";
+
 import { useAuth } from "../hooks/useAuth";
-const changeFormatDate = (lista) => {
-return lista.map(item => ({
-...item,
-start: new Date(item.start),
-end: new Date(item.end)
-}));
-};
-const ActivityContext = createContext();
 
-export const ActivityProvider = ({ children }) => {
+const ScheduleContext = createContext();
+
+export const ScheduleProvider = ({ children }) => {
+
+  
   const { auth } = useAuth();
-  const [scheduleElements, setScheduleElements] = useState([]);
 
-  const getActivities = async () => {
+  const [authSchedule, setAuthSchedule] = useState({});
+
+  const [schedules, setschedules] = useState([]); // Lista con los horarios del estudiante
+
+  const getSchedules = async () => {
     try {
-      const userActivity = await fetchActivities(auth.userId);
-      const listaModificada = changeFormatDate(userActivity);
-      setScheduleElements(listaModificada);
+      const userSchedules = await getUserSchedule(auth.userId); 
+      setschedules(userSchedules);
     } catch (error) {
-      console.log("Error when getting activities");
+      console.log("Error when getting schedules");
     }
   };
 
   useEffect(() => {
-    getActivities();
+    getSchedules();
   }, [auth]);
 
-  const addActivity = async (newActivity, ultimoLista) => {
+  const addSchedule = async (newSchedule) => {
     try {
-      const activityCreated = await createActivity(auth.userId, newActivity);
-      if (activityCreated && ultimoLista) {
-        getActivities();
-      }
+      const scheduleCreated = await createSchedule(auth.userId, newSchedule);
+      if (scheduleCreated) getSchedules();
     } catch (error) {
-      console.log("Error when adding activity");
+      console.log("Error when adding schedule");
     }
   };
 
-  const editActivity = async (updatedActivity) => {
+  const editSchedule = async (updatedSchedule) => {
     try {
-      const data = await updateActivity(auth.userId, updatedActivity);
-      console.log(data["activity"]);
+      const data = await updateSchedule(
+        auth.userId,
+        updatedSchedule
+      );
       if (data) {
-        const updatedActivities = scheduleElements.map((schedule) =>
-          schedule["_id"] === data["activity"]["_id"]
-            ? data["activity"]
-            : schedule
+        const updatedSchedules = schedules.map(
+          (value) =>
+            value["_id"] === data["schedule"]["_id"] && data["schedule"]
         );
-        setScheduleElements(updatedActivities);
+        setschedules(updatedSchedules);
       }
     } catch (error) {
-      console.log("Error when updating activity");
+      console.log("Error when updating schedule");
     }
   };
 
-  const deleteActivity = async (activityId) => {
+  const deleteSchedule = async (scheduleId) => {
     try {
-      const data = await removeActivity(activityId, auth.userId);
-
+      const data = await removeSchedule(auth.userId, scheduleId);
       if (data) {
-        const filteredActivities = scheduleElements.filter(
-          (schedule) => schedule["_id"] !== activityId
+        const filterData = schedules.filter(
+          (value) => value["_id"] !== scheduleId
         );
-        setScheduleElements(filteredActivities);
+        setschedules(filterData);
       }
     } catch (error) {
-      console.log("Error when deleting activity");
+      console.log("Error when deleting schedule");
     }
   };
-const deleteActivityByRelationId = async (idRelacion) => {
-try {
-const data = await removeActivityByIdRelacion(idRelacion, auth.userId);
-if (data) {
-const filteredActivities = scheduleElements.filter(
-(schedule) => schedule["idRelacion"] !== idRelacion
-);
-setScheduleElements(filteredActivities);
-}
-}
-catch (error) {
-console.log("Error when deleting activity by relation id");
-}
-}
 
   return (
-    <ActivityContext.Provider
+    <ScheduleContext.Provider
       value={{
-        scheduleElements,
-        addActivity,
-        editActivity,
-        deleteActivity,
-        deleteActivityByRelationId,
+        schedules,
+        getSchedules,
+        addSchedule,
+        editSchedule,
+        deleteSchedule,
+        authSchedule, 
+        setAuthSchedule
       }}
     >
       {children}
-    </ActivityContext.Provider>
+    </ScheduleContext.Provider>
   );
 };
 
-export default ActivityContext;
+export default ScheduleContext;
