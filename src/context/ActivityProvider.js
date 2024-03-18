@@ -32,7 +32,7 @@ export const ActivityProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    getActivities();
+     getActivities();
   }, [authSchedule]);
 
   const addActivity = async (newActivity) => {

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
+=======
+import React, { useState, useEffect, createContext } from "react";
+>>>>>>> 373526f7b81d358db390f6ebb84df241e70dd638
 import {
   createSchedule,
   getUserSchedule,
@@ -8,7 +12,7 @@ import {
 
 import { useAuth } from "../hooks/useAuth";
 
-const ActivityContext = createContext();
+const ScheduleContext = createContext();
 
 export const ScheduleProvider = ({ children }) => {
 
@@ -74,7 +78,7 @@ export const ScheduleProvider = ({ children }) => {
   };
 
   return (
-    <ActivityContext.Provider
+    <ScheduleContext.Provider
       value={{
         schedules,
         getSchedules,
@@ -86,8 +90,8 @@ export const ScheduleProvider = ({ children }) => {
       }}
     >
       {children}
-    </ActivityContext.Provider>
+    </ScheduleContext.Provider>
   );
 };
 
-export default ScheduleProvider;
+export default ScheduleContext;

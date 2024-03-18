@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://192.168.50.13:4000/api/schedule";
+const API = "http://192.168.0.113:4000/api/schedule";
 
 export const createSchedule = async (userId, schedule) => {
   try {

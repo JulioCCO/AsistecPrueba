@@ -23,10 +23,11 @@ export const BottomTab = () => {
         },
         tabBarActiveTintColor: "#769ECB",
         tabBarInactiveTintColor: "gray",
+
       })}
     >
       <Tab.Screen name="Eventos" component={EventosScreen} />
-      <Tab.Screen name="Horario" component={ScheduleScreen} options={{tabBarShowLabel: null}} />
+      <Tab.Screen name="Horario" component={ScheduleScreen} options={{headerShown:false}} />
       <Tab.Screen name="Notificaciones" component={NotificationScreen} />
     </Tab.Navigator>
   
