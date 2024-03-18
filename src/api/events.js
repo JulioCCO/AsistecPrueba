@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = `http://192.168.1.106:4000/api/events`
+const API = `http://192.168.0.122:4000/api/events`
 export const createEvent = async (userId, event) => {
     try {
         const { data } = await axios.post(`${API}/registerEvent/${userId}`, event);

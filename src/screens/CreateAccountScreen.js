@@ -10,7 +10,7 @@ import { SERVER_HOST_DIR } from "@env"
 import DropdownComponent from "../components/CreateAccount/DropdownComponent"
 import axios from "axios";
 
-const API = `http://192.168.0.113:4000/api/users`
+const API = `http://192.168.0.122:4000/api/users`
 const LoginScreen= () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ const LoginScreen= () => {
 
     const handleClick = async() => {
         try {
-            const response = await axios.post(`http://192.168.1.106:4000/api/users`, {name, email, password, career});
+            const response = await axios.post(`http://192.168.0.122:4000/api/users`, {name, email, password, career});
             
             alert(response.data.msg);
             setName("");

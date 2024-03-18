@@ -11,18 +11,22 @@ import { useAuth } from "../hooks/useAuth";
 const ScheduleContext = createContext();
 
 export const ScheduleProvider = ({ children }) => {
-
-  
   const { auth } = useAuth();
 
-  const [authSchedule, setAuthSchedule] = useState({});
+  const [currentSchedule, setCurrentSchedule] = useState("");
 
   const [schedules, setschedules] = useState([]); // Lista con los horarios del estudiante
 
   const getSchedules = async () => {
     try {
-      const userSchedules = await getUserSchedule(auth.userId); 
-      setschedules(userSchedules);
+      const userSchedules = await getUserSchedule(auth.userId);
+      let newArray = userSchedules.map((schedule) => {
+        return {
+          key: schedule._id,
+          value: schedule.name,
+        };
+      });
+      setschedules(newArray);
     } catch (error) {
       console.log("Error when getting schedules");
     }
@@ -43,10 +47,7 @@ export const ScheduleProvider = ({ children }) => {
 
   const editSchedule = async (updatedSchedule) => {
     try {
-      const data = await updateSchedule(
-        auth.userId,
-        updatedSchedule
-      );
+      const data = await updateSchedule(auth.userId, updatedSchedule);
       if (data) {
         const updatedSchedules = schedules.map(
           (value) =>
@@ -64,7 +65,7 @@ export const ScheduleProvider = ({ children }) => {
       const data = await removeSchedule(auth.userId, scheduleId);
       if (data) {
         const filterData = schedules.filter(
-          (value) => value["_id"] !== scheduleId
+          (value) => value["key"] !== scheduleId
         );
         setschedules(filterData);
       }
@@ -81,8 +82,8 @@ export const ScheduleProvider = ({ children }) => {
         addSchedule,
         editSchedule,
         deleteSchedule,
-        authSchedule, 
-        setAuthSchedule
+        currentSchedule,
+        setCurrentSchedule,
       }}
     >
       {children}
