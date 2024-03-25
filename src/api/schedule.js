@@ -1,11 +1,10 @@
 import axios from "axios";
-
-const API = "http://192.168.0.122:4000/api/schedule";
+import { SERVER_HOST_DIR } from "@env"
 
 export const createSchedule = async (userId, schedule) => {
   try {
     const { data } = await axios.post(
-      `${API}/registerSchedule/${userId}`,
+      `${SERVER_HOST_DIR}/api/schedule/registerSchedule/${userId}`,
       schedule
     );
     return(data);
@@ -20,7 +19,7 @@ export const createSchedule = async (userId, schedule) => {
 export const getUserSchedule = async (userId) => {
     try {
         const { data } = await axios.get(
-          `${API}/getSchedules/${userId}`);
+          `${SERVER_HOST_DIR}/api/schedule/getSchedules/${userId}`);
         return(data);
     
       } catch (error) {
@@ -34,7 +33,7 @@ export const updateSchedule = async (userId, schedule) => {
 
     try {
         const { data } = await axios.put(
-          `${API}/updateSchedule/${userId}`,
+          `${SERVER_HOST_DIR}/api/schedule/updateSchedule/${userId}`,
           schedule
         );
         return(data);
@@ -49,7 +48,7 @@ export const updateSchedule = async (userId, schedule) => {
 // Cuando se remueve el calendario, se debe remover tambien las actividades de este.
 export const removeSchedule = async (userId, scheduleId) => {
     try {
-        const { data } = await axios.delete(`${API}/deleteSchedule/${userId}/${scheduleId}`);
+        const { data } = await axios.delete(`${SERVER_HOST_DIR}/api/schedule/deleteSchedule/${userId}/${scheduleId}`);
         return(data);
     } catch (error) {
         if(error.response) {

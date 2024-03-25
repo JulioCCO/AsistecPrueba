@@ -1,9 +1,8 @@
 import axios from 'axios';
-
-const API = `http://192.168.0.122:4000/api/events`
+import { SERVER_HOST_DIR } from "@env"
 export const createEvent = async (userId, event) => {
     try {
-        const { data } = await axios.post(`${API}/registerEvent/${userId}`, event);
+        const { data } = await axios.post(`${SERVER_HOST_DIR}/api/events/registerEvent/${userId}`, event);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -13,8 +12,10 @@ export const createEvent = async (userId, event) => {
 }
 
 export const fetchEvents = async (userId) => {
+    console.log("siu")
+    console.log(`${SERVER_HOST_DIR}/api/events/getEvents/${userId}`)
     try {
-        const { data } = await axios(`${API}/getEvents/${userId}`);
+        const { data } = await axios(`${SERVER_HOST_DIR}/api/events/getEvents/${userId}`);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -25,7 +26,7 @@ export const fetchEvents = async (userId) => {
 
 export const updateEvent = async (userId, updatedEvent) => {
     try {
-        const { data } = await axios.put(`${API}/updateEvent/${userId}`, updatedEvent);
+        const { data } = await axios.put(`${SERVER_HOST_DIR}/api/events/updateEvent/${userId}`, updatedEvent);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -36,7 +37,7 @@ export const updateEvent = async (userId, updatedEvent) => {
 
 export const removeEvent = async (eventId, userId) => {
     try {
-        const { data } = await axios.delete(`${API}/deleteEvent/${userId}/${eventId}`);
+        const { data } = await axios.delete(`${SERVER_HOST_DIR}/api/events/deleteEvent/${userId}/${eventId}`);
         return(data);
     } catch (error) {
         if(error.response) {

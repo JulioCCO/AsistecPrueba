@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import axios from 'axios';
 import { useAuth } from "../hooks/useAuth";
-import { SERVER_HOST_DIR } from "@env"
+import { SERVER_HOST_DIR} from "@env"
 
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
@@ -22,13 +22,17 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
-            const direction = `http://192.168.0.122:4000/api/users/login`;
+            const direction = `${SERVER_HOST_DIR}/api/users/login`;
+            console.log("si")
             const { data } = await axios.post(direction, { email, password });
+            console.log("no")
+            console.log(data)
             setAuth(data)
             setEmail("");
             navigation.navigate("Home");
             setPassword("");
         } catch (error) {
+            console.log(error)
             alert(error.response?.data.msg);
         }
     }

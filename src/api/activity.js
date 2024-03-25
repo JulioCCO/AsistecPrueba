@@ -1,10 +1,9 @@
 import axios from 'axios';
-
-const API = 'http://192.168.0.122:4000/api/activity'
+import { SERVER_HOST_DIR } from "@env"
 
 export const createActivity = async (ScheduleId, activity) => {
     try {
-        const { data } = await axios.post(`${API}/registerActivity/${ScheduleId}`, activity);
+        const { data } = await axios.post(`${SERVER_HOST_DIR}/api/activity/registerActivity/${ScheduleId}`, activity);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -15,7 +14,7 @@ export const createActivity = async (ScheduleId, activity) => {
 
 export const fetchActivities = async (ScheduleId) => {
     try {
-        const { data } = await axios.get(`${API}/getActivities/${ScheduleId}`);
+        const { data } = await axios.get(`${SERVER_HOST_DIR}/api/activity/getActivities/${ScheduleId}`);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -26,7 +25,7 @@ export const fetchActivities = async (ScheduleId) => {
 
 export const updateActivity = async (ScheduleId, updatedActivity) => {
     try {
-        const { data } = await axios.put(`${API}/updateActivity/${ScheduleId}`, updatedActivity);
+        const { data } = await axios.put(`${SERVER_HOST_DIR}/api/activity/updateActivity/${ScheduleId}`, updatedActivity);
         return(data);
     } catch (error) {
         if(error.response) {
@@ -37,7 +36,7 @@ export const updateActivity = async (ScheduleId, updatedActivity) => {
 
 export const removeActivity = async (activityId, ScheduleId) => {
     try {
-        const { data } = await axios.delete(`${API}/deleteActivity/${ScheduleId}/${activityId}`);
+        const { data } = await axios.delete(`${SERVER_HOST_DIR}/api/activity/deleteActivity/${ScheduleId}/${activityId}`);
         return(data);
     } catch (error) {
         if(error.response) {
