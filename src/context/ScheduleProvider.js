@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React, { useEffect, useState } from "react";
-=======
 import React, { useState, useEffect, createContext } from "react";
->>>>>>> 373526f7b81d358db390f6ebb84df241e70dd638
 import {
   createSchedule,
   getUserSchedule,
