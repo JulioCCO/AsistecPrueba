@@ -1,21 +1,40 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Input } from "react-native-elements";
 import {useSchedule} from "../../../hooks/useSchedule";
 import { useAuth } from '../../../hooks/useAuth';
 import Icon from "react-native-vector-icons/FontAwesome";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
-const CreateEditScheduleModal = ({ modalVisible, setModalVisible }) => {
+const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
+  const {schedules, currentSchedule,addSchedule,editSchedule} = useSchedule();
     const WIDTH = Dimensions.get("window").width - 80;
     const HEIGHT = Dimensions.get("window").height - 660;
-    const { addSchedule } = useSchedule();
     const { auth } = useAuth();
     const [name, setName] = useState("");
+    useEffect(() => {
+        if (action == "edit") {
+            //buscar el name recorriendo el arreglo de schedules
+            const schedule = schedules.find((schedule) => schedule.key == currentSchedule);
+            setName(schedule.value);
+        }
+    }
+    , [ ]);
     const handleCreateSchedule = () => {
-        const schedule = {
+        
+        if (action == "edit") {
+          const schedule = {
+            _id: currentSchedule,
             name: name,
             userId: auth.userId,
         };
-        addSchedule(schedule);
+          editSchedule(schedule);
+        }
+        else {
+          const schedule = {
+            name: name,
+            userId: auth.userId,
+        };
+          addSchedule(schedule);
+        }
         setName("");
         setModalVisible(!modalVisible);
     };
@@ -29,7 +48,7 @@ const CreateEditScheduleModal = ({ modalVisible, setModalVisible }) => {
         >
           <View style={{  ...styles.modal, width: WIDTH,  height: HEIGHT}}>
             <View style={styles.modalHeader}>
-            <Text style={{fontSize: 20, color: "white"}}>Crear Horario</Text>
+            <Text style={{fontSize: 20, color: "white"}}>{action == 'create' ? "Crear horario": "Editar Horario"}</Text>
             <TouchableOpacity onPress={()=> {setModalVisible(!modalVisible)}} style={styles.closeModal}>
             <Icon name="close" size={25} color="white" style={{}} />
           </TouchableOpacity>

@@ -49,10 +49,12 @@ export const ScheduleProvider = ({ children }) => {
     try {
       const data = await updateSchedule(auth.userId, updatedSchedule);
       if (data) {
-        const updatedSchedules = schedules.map(
-          (value) =>
-            value["_id"] === data["schedule"]["_id"] && data["schedule"]
-        );
+        const updatedSchedules = schedules.map((schedule) => {
+          if (schedule.key === updatedSchedule._id) {
+            schedule.value = updatedSchedule.name;
+          }
+          return schedule;
+        });
         setschedules(updatedSchedules);
       }
     } catch (error) {
