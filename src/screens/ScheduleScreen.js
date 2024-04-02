@@ -1,16 +1,53 @@
-import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Modal, Alert } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Alert,
+  SafeAreaView,
+} from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSchedule } from "../hooks/useSchedule";
 import CreateEditScheduleModal from "../components/Schedule/Create/CreateEditScheduleModal";
-
+import CreateEditActivityModal from "../components/Schedule/Create/CreateEditActivityModal";
+import TimeTableView, { genTimeBlock } from 'react-native-timetable';
 const ScheduleScreen = () => {
   const [modalVisible, setModalVisible] = useState(false); //estado para abrir el model de crear horario
-  const [alertVisibleTrash, setAlertVisibleTrash] = useState(false); //estado para abrir el model de crear horario
+  const[modalCreateVisible, setModalCreateVisible] = useState(false);
   const { schedules, setCurrentSchedule, deleteSchedule, currentSchedule } =
     useSchedule();
   const [action, setAction] = useState(""); //estado para saber si se va a crear o editar un horario
+  const scrollViewRef = useRef();
+  const numOfDays = 5;
+  const pivotDate = genTimeBlock('mon');
+  const onEventPress = ({ event }) => {
+    console.log('onEventPress', event);
+  };
+  const [options, setOptions] = useState(false);
+  const [deleteFlag, setDeleteFlag] = useState(false);
+  const [editFlag, seteditFlag] = useState(false);
+ const changeModalVisible = () => {//agregar actividad
+    setModalCreateVisible(!modalCreateVisible);
+  };
+  const events_data = [
+    {
+      title: "Math",
+      startTime: genTimeBlock("MON", 9),
+      endTime: genTimeBlock("MON", 10, 50),
+      location: "Classroom 403",
+      extra_descriptions: ["ckases de mate"],
+    },
+    {
+      title: "Math",
+      startTime: genTimeBlock("WED", 9),
+      endTime: genTimeBlock("WED", 10, 50),
+      location: "Classroom 403",
+      extra_descriptions: ["Kim", "Lee"],
+    },
+  ];
+
   const deleteOptionSchedule = () => {
     Alert.alert("Confirmación", `¿Desea eliminar el horario seleccionado?`, [
       {
@@ -40,7 +77,7 @@ const ScheduleScreen = () => {
           setSelected={(item) => {
             setCurrentSchedule(item);
           }}
-          boxStyles={{ borderColor: "#5B83B0", backgroundColor: "#8FC1A9" }}
+          boxStyles={{ borderColor: "#5B83B0" }}
         />
         {/* Botones para crear, editar y eliminar horarios */}
         <TouchableOpacity
@@ -80,7 +117,75 @@ const ScheduleScreen = () => {
           action={action}
         />
       </Modal>
+        {/* calendario semanal */}
+        <View style={{flex: 1, backgroundColor: '#F8F8F8'}}>
+          <TimeTableView
+             scrollViewRef={(ref) => scrollViewRef.current = ref}
+            events={events_data}
+            pivotTime={0}
+            pivotEndTime={24}
+            pivotDate={pivotDate}
+            nDays={numOfDays}
+            onEventPress={onEventPress}
+            headerStyle={{backgroundColor: '#5B83B0'}}
+            formatDateHeader="dddd"
+            locale="es"
+          />
+        </View>
+        <TouchableOpacity
+      onPress={() => {
+        setOptions(!options);
+      }}
+      style={styles.options}>
+        <Icon name="ellipsis-v" type="font-awesome" color="#ffffff" size={25} />
+        {options && (
+          <TouchableOpacity onPress={changeModalVisible} style={styles.addCA}>
+          <Icon name="plus" type="font-awesome" color="#ffffff" size={25} />
+        </TouchableOpacity>
+        )}
+        {options && (
+          <TouchableOpacity
+          onPress={() => {
+            setDeleteFlag(!deleteFlag);
+          }}
+          style={[
+            styles.deleteCA,
+            { backgroundColor: deleteFlag ? "#FF5733" : "#5B83B0" },
+          ]}
+        >
+          <Icon name="trash" type="font-awesome" color="#ffffff" size={25} />
+        </TouchableOpacity>
+        )}
+        {options && (
+          <TouchableOpacity
+          onPress={() => {
+            seteditFlag(!editFlag);
+          }}
+          style={[
+            styles.editCA,
+            { backgroundColor: editFlag ? "#FF5733" : "#5B83B0" },
+          ]}
+        >
+          
+          <Icon name="edit" type="font-awesome" color="#ffffff" size={25} />
+        </TouchableOpacity>
+        )}
+      </TouchableOpacity>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalCreateVisible}
+        onRequestClose={() => {
+          setModalCreateVisible(!modalCreateVisible);
+        }}
+      >
+        <CreateEditActivityModal
+          modalVisible={modalCreateVisible}
+          setModalVisible={setModalCreateVisible}
+        />
+      </Modal>
     </View>
+    
   );
 };
 export default ScheduleScreen;
@@ -128,5 +233,47 @@ const styles = StyleSheet.create({
     alignItems: "center",
     right: "22%",
     top: 12,
+  },
+  options: {
+    position: "absolute",
+    backgroundColor: "#5B83B0",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 30,
+    right: 15,
+  },
+  addCA: {
+    position: "absolute",
+    backgroundColor: "#5B83B0",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 70,
+    right:0,
+  },
+  deleteCA: {
+    position: "absolute",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 125,
+    right: 0,
+  },
+  editCA: {
+    position: "absolute",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 180,
+    right: 0,
   },
 });
