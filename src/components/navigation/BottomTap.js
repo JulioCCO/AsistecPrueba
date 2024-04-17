@@ -5,7 +5,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import TabConfig from "./TabConfig";
 
 import EventosScreen from "../../screens/EventosScreen";
-import HorarioScreen from "../../screens/HorarioScreen";
 import ScheduleScreen from "../../screens/ScheduleScreen";
 import NotificationScreen from "../../screens/NotificacionScreen";
 import { ta } from "date-fns/locale";

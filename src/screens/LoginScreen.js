@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import axios from 'axios';
 import { useAuth } from "../hooks/useAuth";
-import { SERVER_HOST_DIR} from "@env"
+import { SERVER_HOST_DIR } from "@env"
 
 const LoginScreen = () => {
     const [email, setEmail] = useState("");

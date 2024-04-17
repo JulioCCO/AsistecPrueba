@@ -17,9 +17,11 @@ export const createSchedule = async (userId, schedule) => {
 };
 
 export const getUserSchedule = async (userId) => {
+  console.log('consulta: ', `${SERVER_HOST_DIR}/api/schedule/getSchedules/${userId}`)
     try {
         const { data } = await axios.get(
           `${SERVER_HOST_DIR}/api/schedule/getSchedules/${userId}`);
+        console.log('data', data);
         return(data);
     
       } catch (error) {

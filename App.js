@@ -8,15 +8,15 @@ import { ScheduleProvider } from "./src/context/ScheduleProvider.js";
 const App = () => {
   return (
     <AuthProvider>
-      <ScheduleProvider>
-        <ActivityProvider>
-          <EventProvider>
+      <EventProvider>
+        <ScheduleProvider>
+          <ActivityProvider>
             <DataProvider>
               <InitApp />
             </DataProvider>
-          </EventProvider>
-        </ActivityProvider>
-      </ScheduleProvider>
+          </ActivityProvider>
+        </ScheduleProvider>
+      </EventProvider>
     </AuthProvider>
   );
 };

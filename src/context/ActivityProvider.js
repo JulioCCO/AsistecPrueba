@@ -31,9 +31,13 @@ export const ActivityProvider = ({ children }) => {
     }
   };
 
+  // Este use Effect que se ejecuta al cargar el provider hace que se haga la consulta sin datos,
   useEffect(() => {
+    if(authSchedule === undefined) return; //Si es undefinido no haga nada
+    console.log('authSchedule', authSchedule);
      getActivities();
   }, [authSchedule]);
+  
 
   const addActivity = async (newActivity) => {
     try {
