@@ -17,6 +17,11 @@ export const ScheduleProvider = ({ children }) => {
 
   const [schedules, setschedules] = useState([]); // Lista con los horarios del estudiante
 
+  useEffect(() => {
+    console.log('auth', auth)
+    if (auth !== undefined) getSchedules();
+  }, [auth]);
+
   const getSchedules = async () => {
     try {
       const userSchedules = await getUserSchedule(auth.userId);
@@ -32,9 +37,6 @@ export const ScheduleProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    getSchedules();
-  }, [auth]);
 
   const addSchedule = async (newSchedule) => {
     try {

@@ -15,28 +15,24 @@ import CreateEditActivityModal from "../components/Schedule/CreateEdit/CreateEdi
 import TimeTableView, { genTimeBlock } from 'react-native-timetable';
 
 const ScheduleScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false); //estado para abrir el model de crear horario
-  const [modalCreateVisible, setModalCreateVisible] = useState(false);
-
   const { schedules, setCurrentSchedule, deleteSchedule, currentSchedule } = useSchedule(); //Custom hook
 
+  {/* Estados de horarios*/ }
+  const [modalVisible, setModalVisible] = useState(false); //estado para abrir el model de crear horario
   const [action, setAction] = useState(""); //estado para saber si se va a crear o editar un horario
   const scrollViewRef = useRef();
   const numOfDays = 5;
   const pivotDate = genTimeBlock('mon');
 
-  const onEventPress = ({ event }) => {
-    console.log('onEventPress', event);
-  };
+  {/* Estados de activiades*/ }
+  const [modalActivityVisible, setModalActivityVisible] = useState(false); // determina la apertura y cierre del modal de activity
+  const [selectedActivity, setSelectedActivity] = useState(undefined); // lleva la actividad seleccionada 
+  const [options, setOptions] = useState(false); // muestra los botones para crear, editar y eliminar actividad
+  const [modalActivityAction, setModalActivityAction] = useState(''); // para saber si es editar o crear
 
-  {/* Banderas de activiades*/ }
-  const [options, setOptions] = useState(false);
-  const [deleteFlag, setDeleteFlag] = useState(false);
-  const [editFlag, seteditFlag] = useState(false);
-
-  const changeModalVisible = () => {//agregar actividad
-    setModalCreateVisible(!modalCreateVisible);
-  };
+  const [deleteActivityFlag, setDeleteActivityFlag] = useState(false); // bandera que se activa cuando se le da al boton de eliminar actividad
+  const [onAcceptDeleteActivity, setOnAcceptDeleteActivity] = useState(false) // bandera que se activa cuando se acepta el modal de confirmacion para eliminiar actividad
+  const [editActivityFlag, setEditActivityFlag] = useState(false);
 
   const events_data = [
     {
@@ -95,6 +91,49 @@ const ScheduleScreen = () => {
     },
   ];
 
+  useEffect(() => {
+    if (deleteActivityFlag === true) {
+      // Agregar funcion para eliminar la actividad
+      // Tomar en cuenta que se debe elevar un modal para confirmar eliminar
+
+    }
+  }, [deleteActivityFlag])
+
+
+  // Funcion que toma la actividad seleccionada del horario
+  const onEventPress = (event) => {
+    console.log('onEventPress', event);
+    setSelectedActivity(event);
+  };
+
+  function handleDeleteActivity() {
+    if (selectedActivity !== undefined) {
+      setDeleteActivityFlag(!deleteActivityFlag);
+      // levantar un modal de acceptar eliminar
+    } else {
+      // levantar modal de falta actividad
+      console.log('seleccione una actividad para eliminar')
+    }
+  }
+
+  function handleCreateActivity() {
+    setModalActivityAction('create');
+    setModalActivityVisible(!modalActivityVisible);
+  }
+
+  function handleUpdateActivity() {
+    // verificar si selecciono una actividad
+    if (selectedActivity !== undefined) {
+      setModalActivityAction('edit');
+      setEditActivityFlag(true);
+      setModalActivityVisible(!modalActivityVisible);
+    }
+    else {
+      // levantar modal de falta actividad
+      console.log('seleccione una actividad para editar')
+    }
+  }
+
   const deleteOptionSchedule = () => {
     Alert.alert("Confirmación", `¿Desea eliminar el horario seleccionado?`, [
       {
@@ -110,6 +149,7 @@ const ScheduleScreen = () => {
       },
     ]);
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -179,6 +219,7 @@ const ScheduleScreen = () => {
           locale="es"
         />
       </View>
+
       {/* Selector para botones editar, eliminiar y crear actividades */}
       <TouchableOpacity
         onPress={() => {
@@ -187,53 +228,56 @@ const ScheduleScreen = () => {
         style={styles.options}>
         <Icon name="ellipsis-v" type="font-awesome" color="#ffffff" size={25} />
         {options && (
-          <TouchableOpacity onPress={changeModalVisible} style={styles.addCA}>
+          <TouchableOpacity
+            onPress={() => { handleCreateActivity() }}
+            style={styles.addCA}>
             <Icon name="plus" type="font-awesome" color="#ffffff" size={25} />
           </TouchableOpacity>
         )}
         {options && (
+          // boton para accion para eliminar
           <TouchableOpacity
-            onPress={() => {
-              setDeleteFlag(!deleteFlag);
-            }}
+            onPress={() => { handleDeleteActivity() }}
             style={[
               styles.deleteCA,
-              { backgroundColor: deleteFlag ? "#FF5733" : "#5B83B0" },
+              { backgroundColor: deleteActivityFlag ? "#FF5733" : "#5B83B0" },
             ]}
           >
             <Icon name="trash" type="font-awesome" color="#ffffff" size={25} />
           </TouchableOpacity>
         )}
         {options && (
+          // boton para accion para editar
           <TouchableOpacity
-            onPress={() => {
-              seteditFlag(!editFlag);
-            }}
+            onPress={() => { handleUpdateActivity() }}
             style={[
               styles.editCA,
-              { backgroundColor: editFlag ? "#FF5733" : "#5B83B0" },
+              { backgroundColor: editActivityFlag ? "#FF5733" : "#5B83B0" },
             ]}
           >
-
             <Icon name="edit" type="font-awesome" color="#ffffff" size={25} />
           </TouchableOpacity>
         )}
+
       </TouchableOpacity>
+
+      {/* Modal de crear y editar actividad */}
       <Modal
         animationType="fade"
         transparent={true}
-        visible={modalCreateVisible}
+        visible={modalActivityVisible}
         onRequestClose={() => {
-          setModalCreateVisible(!modalCreateVisible);
+          setModalActivityVisible(!modalActivityVisible);
         }}
       >
         <CreateEditActivityModal
-          modalVisible={modalCreateVisible}
-          setModalVisible={setModalCreateVisible}
+          modalVisible={modalActivityVisible}
+          setModalVisible={setModalActivityVisible}
+          action={modalActivityAction}
+          selectedActivity={selectedActivity}
         />
       </Modal>
     </View>
-
   );
 };
 

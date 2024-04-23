@@ -22,6 +22,7 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
+            console.log('LoginScreen: handleLogin: SERVER_HOST_DIR', SERVER_HOST_DIR)
             const direction = `${SERVER_HOST_DIR}/api/users/login`;
             console.log("si")
             const { data } = await axios.post(direction, { email, password });

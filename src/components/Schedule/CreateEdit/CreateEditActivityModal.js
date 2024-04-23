@@ -9,7 +9,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from
 import { SelectList } from 'react-native-dropdown-select-list';
 import DayOfWeekList from '../../../helpers/weekDays.js';
 
-const CreateEditActivityModal = ({ modalVisible, setModalVisible, action }) => {
+const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, selectedActivity }) => {
 
   const { currentSchedule } = useSchedule();
   const { auth } = useAuth();
@@ -44,10 +44,16 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action }) => {
   )
 
   useEffect(() => {
-    if (action == "edit") {
-
+    if (action === "edit") {
+      if (selectedActivity !== undefined) {
+        console.log('CreateEditActivityModal: useEffect: selectedActivity', selectedActivity)
+        // llamar a funcion que se encargue de subir los datos de la actividad
+        setListOfDays(DayOfWeekList);
+      } else {
+        console.log('seleccione una actividad')
+      }
     }
-    else {
+    else if (action === "create") {
       setListOfDays(DayOfWeekList);
     }
   }, [])
@@ -183,6 +189,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action }) => {
             }}
           />
           {/* Start and end times */}
+          <Text style={{...styles.text, fontSize: 14,}}>Horario</Text>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <View style={{ flex: 1 }}>
               {/* Start time */}
