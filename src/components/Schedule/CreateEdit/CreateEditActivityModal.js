@@ -3,7 +3,7 @@ import { Input } from "react-native-elements";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert } from 'react-native';
 
 import DayOfWeekList from '../../../helpers/weekDays.js';
 import { useSchedule } from "../../../hooks/useSchedule.js";
@@ -27,8 +27,8 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
   const [showInitialHour, setShowInitialHour] = useState(false);
   const [showFinalHour, setShowFinalHour] = useState(false);
   // state for TimePicker component
-  const [initialHour, setInitialHour] = useState(new Date());
-  const [finalHour, setFinalHour] = useState(new Date());
+  const [initialHour, setInitialHour] = useState(undefined);
+  const [finalHour, setFinalHour] = useState(undefined);
 
   // Guarda el dia o dias seleccionados, en el que se debe mostrar dicha actividad
   const [selectedDays, setSelectedDays] = useState([]);
@@ -43,6 +43,9 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
       scheduleId: '',
     }
   )
+
+  // verificadores de campos vacios en las entradas
+  const [titleFlag, setTitleFlag] = useState(false);
 
 
   // handler to show the initial datepicker
@@ -89,34 +92,114 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     },
   */
   const onCreateActivity = async () => {
-    handleCheckInputs();
-    // se debe validar que los campos obligatorios no este vacios
-    // Tambien se debe validar que la hora inicial no sea mayor o igual a la hora final
-    console.log('onCreateActivity');
-    console.log('title', title);
-    console.log('location', location);
-    console.log('extra_description', extra_description);
-    console.log('initialHour', initialHour);
-    console.log('finalHour', finalHour);
-    console.log('days', listOfdays);
+    validation = handleCheckInputs();
+    console.log('validation', validation)
 
-    const obj = {
-      title,
-      location,
-      description: extra_description,
-      daysList: [],
-      scheduleId: currentScheduleKey,
+    if (validation === false) {
+      const obj = {
+        title,
+        location,
+        description: extra_description,
+        daysList: [],
+        scheduleId: currentScheduleKey,
+      }
+      setFormatedData(obj);
+      console.log('obj', obj);
+      const data = await addActivity(obj);
+      console.log("backend request data", data);
+      //handleFormattedDataToDateModel(selectedDays, initialHour, finalHour)
+      setModalVisible(!modalVisible);
     }
-    setFormatedData(obj);
-    console.log('obj', obj);
-    await addActivity(obj);
-    setModalVisible(!modalVisible);
 
   }
 
   const handleCheckInputs = () => {
+    let validation = false;
+    if (title === "") {
+      setTitleFlag(true);
+      validation = true
+      return validation;
+    } else {
+      setTitleFlag(false);
+      validation = false
+    }
 
+    //validar horas y minutos
+    validation = validationDates();
+    if (validation === true) return validation;
+    //validar dias 
+    validation = validationDaySelected()
+
+    return validation;
   }
+
+  /*
+   Funcion encargada de verificar que la hora inicial de la actividad no sea
+   mayor a la hora final. Si la actividad tiene la misma hora valida los minutos.
+   Tambien verifica que se haya ingresado la fecha inicial o la fecha final
+
+   Para la verificacion usa los valores de los states: initialHour y finalHour.
+
+  */
+  const validationDates = () => {
+    let validation = false;
+    if (initialHour === undefined) {
+      let text = "Ingrese la hora inicial de la actividad."
+      console.log(text);
+      handleInvalidDate(text);
+      validation = true
+      return validation
+    }
+    if (finalHour === undefined) {
+      let text = "Ingrese la hora final de la actividad."
+      console.log(text);
+      handleInvalidDate(text);
+      validation = true
+      return validation
+    }
+
+    // Obtener las horas de los objetos Date
+    const initialHourCheck = initialHour.getHours();
+    const initialMinutesCheck = initialHour.getMinutes();
+
+    const finalHourCheck = finalHour.getHours();
+    const finalMinutesCheck = finalHour.getMinutes();
+
+    if (initialHourCheck > finalHourCheck) { // La hora inicial no puede ser menor a la hora final
+      let text = "La hora inicial no puede ser mayor a la hora final."
+      console.log(text);
+      handleInvalidDate(text);
+      validation = true
+      return validation
+    }
+    else if (initialHourCheck === finalHourCheck) { // si es la misma hora, verificar minutos 
+      if (initialMinutesCheck >= finalMinutesCheck) {
+        let text = "Cuando las hora inicial es igual a la hora fina, los minutos de la hora inicial no pueden ser mayores o iguales a los de la hora final."
+        console.log(text)
+        handleInvalidDate(text);
+        validation = true
+        return validation
+      }
+    }
+    return validation
+  }
+
+  // Guarda los dias seleccionados en el state selectedDays
+  const validationDaySelected = () => {
+    let validation = false;
+    const onlySelectedDays = listOfdays.filter(day => day.isSelected === true);
+    setSelectedDays(onlySelectedDays);
+
+    if (onlySelectedDays.length === 0) {
+      let text = "Seleccione al menos un día."
+      console.log(text);
+      handleInvalidDate(text);
+      validation = true;
+      return validation;
+    }
+    return validation;
+  }
+
   // funcion que recibe un json con el dia seleccionado y cambia su paramentro isSelected
   const handleDaysSelected = (dayParameter) => {
 
@@ -128,6 +211,39 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
       }
     });
     setListOfDays(updatedListOfDays);
+  }
+
+  const handleInvalidDate = (text) => {
+    Alert.alert("Alerta", text, [
+      {
+        text: "Aceptar",
+      },
+      {
+        text: "CANCELAR",
+        style: "cancel",
+      },
+    ]);
+  };
+
+  const handleFormattedDataToDateModel = (daysList, iniDate, finDate, activityId) => {
+
+    const initialHour = iniDate.getHours();
+    const initialMinutes = iniDate.getMinutes();
+
+    const finalHour = finDate.getHours();
+    const finalMinutes = finDate.getMinutes();
+    const dateObjList = daysList.map((dayToParse) => {
+      return dateObj =
+      {
+        day: dayToParse.day,
+        initialHour: initialHour,
+        initialMinute: initialMinutes,
+        finalHour: finalHour,
+        finalMinute: finalMinutes,
+        activityID: activityId,
+      }
+    });
+    console.log('dateObjList', dateObjList);
   }
 
   useEffect(() => {
@@ -145,15 +261,6 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     }
   }, [])
 
-  /*
-  useEffect(() => {
-    console.log('\nformatedData', formatedData)
-    if (formatedData.title !== '') {
-      addActivity(formatedData);
-      console.log('\nformatedData enviada', formatedData)
-    }
-  }, [modalVisible])
-*/
   return (
     <TouchableOpacity
       disabled={true}
@@ -183,6 +290,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
               borderBottomWidth: 2,
               borderBottomColor: "#00000066",
             }}
+            errorMessage={titleFlag && "* Ingrese el titulo."}
           />
           <Text style={styles.text}>Ubicación</Text>
           <Input
@@ -212,6 +320,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
               borderBottomColor: "#00000066",
             }}
           />
+
           {/* Start and end times */}
           <Text style={{ ...styles.text, fontSize: 14, }}>Horario</Text>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
@@ -229,11 +338,13 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
               {showInitialHour && (
                 <DateTimePicker
                   testID="dateTimePicker"
-                  value={initialHour}
+                  value={initialHour === undefined ? new Date() : initialHour}
                   mode="time"
                   is24Hour={false}
                   display="default"
                   onChange={onInitialHourChange}
+                  minuteInterval={5}
+                  positiveButton={{ label: 'Aceptar', textColor: 'green' }}
                 />
               )}
             </View>
@@ -251,11 +362,13 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
               {showFinalHour && (
                 <DateTimePicker
                   testID="dateTimePicker"
-                  value={finalHour}
+                  value={finalHour === undefined ? new Date() : finalHour}
                   mode="time"
                   is24Hour={false}
                   display="default"
                   onChange={onFinalHourChange}
+                  minuteInterval={5}
+                  positiveButton={{ label: 'Aceptar', textColor: 'green' }}
                 />
               )}
             </View>
