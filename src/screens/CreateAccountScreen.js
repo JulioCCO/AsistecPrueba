@@ -6,8 +6,8 @@ import {
 } from "react-native";
 import { Input, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
-import { SERVER_HOST_DIR } from "@env"
-import DropdownComponent from "../components/CreateAccount/DropdownComponent"
+import { SERVER_HOST_DIR } from "@env";
+import DropdownComponent from "../components/CreateAccount/DropdownComponent";
 import axios from "axios";
 
 const LoginScreen= () => {

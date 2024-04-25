@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext } from "react";
+
 import {
   createSchedule,
   getUserSchedule,
@@ -11,16 +12,30 @@ import { useAuth } from "../hooks/useAuth";
 const ScheduleContext = createContext();
 
 export const ScheduleProvider = ({ children }) => {
+
   const { auth } = useAuth();
-
-  const [currentSchedule, setCurrentSchedule] = useState("");
-
+  const [currentScheduleKey, setCurrentScheduleKey] = useState("");
+  const [currentScheduleData, setCurrentScheduleData] = useState(undefined);
   const [schedules, setschedules] = useState([]); // Lista con los horarios del estudiante
 
   useEffect(() => {
     console.log('auth', auth)
     if (auth !== undefined) getSchedules();
   }, [auth]);
+
+  useEffect(() => {
+    if (schedules.length > 0) {
+      setCurrentScheduleKey(schedules[0].key);
+    }
+  }, [schedules])
+
+  useEffect(() => {
+    schedules.map((schedule) => {
+      if (schedule.key === currentScheduleKey) {
+        setCurrentScheduleData(schedule);
+      }
+    })
+  }, [currentScheduleKey])
 
   const getSchedules = async () => {
     try {
@@ -86,8 +101,10 @@ export const ScheduleProvider = ({ children }) => {
         addSchedule,
         editSchedule,
         deleteSchedule,
-        currentSchedule,
-        setCurrentSchedule,
+        currentScheduleKey,
+        setCurrentScheduleKey,
+        currentScheduleData,
+        setCurrentScheduleData,
       }}
     >
       {children}

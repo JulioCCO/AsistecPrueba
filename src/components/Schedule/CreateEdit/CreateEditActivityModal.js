@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from "react-native-elements";
-import { useSchedule } from "../../../hooks/useSchedule";
-import { useAuth } from '../../../hooks/useAuth';
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list';
+
 import DayOfWeekList from '../../../helpers/weekDays.js';
+import { useSchedule } from "../../../hooks/useSchedule.js";
+import { useActivity } from '../../../hooks/useActivity.js';
+
 
 const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, selectedActivity }) => {
 
-  const { currentSchedule } = useSchedule();
-  const { auth } = useAuth();
+  const { currentSchedule, currentScheduleKey } = useSchedule();
+  const { addActivity } = useActivity();
 
   const WIDTH = Dimensions.get("window").width * 0.8;
   const HEIGHT = (Dimensions.get("window").height * 0.6) + 100;
@@ -58,6 +59,16 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     }
   }, [])
 
+  useEffect(() => {
+    console.log('\nformatedData', formatedData)
+    if (formatedData.title !== '') {
+
+      addActivity(formatedData);
+      console.log('\nformatedData enviada', formatedData)
+    }
+  }, [formatedData])
+
+
   // handler to show the initial datepicker
   const showInitialHourpicker = () => {
     setShowInitialHour(true);
@@ -101,7 +112,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
       extra_descriptions: ["clases de mate"],
     },
   */
-  onCreateActivity = () => {
+  const onCreateActivity = () => {
     handleCheckInputs();
     // se debe validar que los campos obligatorios no este vacios
     // Tambien se debe validar que la hora inicial no sea mayor o igual a la hora final
@@ -111,7 +122,19 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     console.log('extra_description', extra_description);
     console.log('initialHour', initialHour);
     console.log('finalHour', finalHour);
+    console.log('days', listOfdays);
+
+    const obj = {
+      title,
+      location,
+      description: extra_description,
+      daysList: [],
+      scheduleId: currentScheduleKey,
+    }
+    setFormatedData(obj)
+
     setModalVisible(!modalVisible);
+
   }
 
   const handleCheckInputs = () => {
@@ -189,7 +212,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
             }}
           />
           {/* Start and end times */}
-          <Text style={{...styles.text, fontSize: 14,}}>Horario</Text>
+          <Text style={{ ...styles.text, fontSize: 14, }}>Horario</Text>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <View style={{ flex: 1 }}>
               {/* Start time */}

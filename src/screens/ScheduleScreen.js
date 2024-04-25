@@ -5,17 +5,21 @@ import {
   StyleSheet,
   Modal,
   Alert,
-  SafeAreaView,
 } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useSchedule } from "../hooks/useSchedule";
-import CreateEditScheduleModal from "../components/Schedule/CreateEdit/CreateEditScheduleModal";
-import CreateEditActivityModal from "../components/Schedule/CreateEdit/CreateEditActivityModal";
 import TimeTableView, { genTimeBlock } from 'react-native-timetable';
 
+import CreateEditScheduleModal from "../components/Schedule/CreateEdit/CreateEditScheduleModal";
+import CreateEditActivityModal from "../components/Schedule/CreateEdit/CreateEditActivityModal";
+import { useSchedule } from "../hooks/useSchedule";
+
+
 const ScheduleScreen = () => {
-  const { schedules, setCurrentSchedule, deleteSchedule, currentSchedule } = useSchedule(); //Custom hook
+
+  const { schedules, currentScheduleKey, setCurrentScheduleKey,
+    deleteSchedule, currentScheduleData, setCurrentScheduleData
+  } = useSchedule(); //Custom hook
 
   {/* Estados de horarios*/ }
   const [modalVisible, setModalVisible] = useState(false); //estado para abrir el model de crear horario
@@ -33,6 +37,16 @@ const ScheduleScreen = () => {
   const [deleteActivityFlag, setDeleteActivityFlag] = useState(false); // bandera que se activa cuando se le da al boton de eliminar actividad
   const [onAcceptDeleteActivity, setOnAcceptDeleteActivity] = useState(false) // bandera que se activa cuando se acepta el modal de confirmacion para eliminiar actividad
   const [editActivityFlag, setEditActivityFlag] = useState(false);
+
+
+  useEffect(() => {
+    if (deleteActivityFlag === true) {
+      // Agregar funcion para eliminar la actividad
+      // Tomar en cuenta que se debe elevar un modal para confirmar eliminar
+      console.log('delete flag true');
+      
+    }
+  }, [deleteActivityFlag])
 
   const events_data = [
     {
@@ -91,13 +105,6 @@ const ScheduleScreen = () => {
     },
   ];
 
-  useEffect(() => {
-    if (deleteActivityFlag === true) {
-      // Agregar funcion para eliminar la actividad
-      // Tomar en cuenta que se debe elevar un modal para confirmar eliminar
-
-    }
-  }, [deleteActivityFlag])
 
 
   // Funcion que toma la actividad seleccionada del horario
@@ -139,8 +146,8 @@ const ScheduleScreen = () => {
       {
         text: "SI",
         onPress: () => {
-          deleteSchedule(currentSchedule);
-          setCurrentSchedule(null);
+          deleteSchedule(currentScheduleKey);
+          setCurrentScheduleKey(null);
         },
       },
       {
@@ -149,6 +156,7 @@ const ScheduleScreen = () => {
       },
     ]);
   };
+
 
   return (
     <View style={styles.container}>
@@ -160,9 +168,9 @@ const ScheduleScreen = () => {
             backgroundColor: "#F6F6F6",
             borderWidth: 0,
           }}
-          placeholder={"Selecciona un horario"}
+          placeholder={currentScheduleData !== undefined ? currentScheduleData.value : "Seleccione un horario"}
           setSelected={(item) => {
-            setCurrentSchedule(item);
+            setCurrentScheduleKey(item);
           }}
           boxStyles={{ borderColor: "#5B83B0" }}
         />

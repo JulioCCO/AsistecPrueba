@@ -6,42 +6,65 @@ import {
   removeActivity,
 } from "../api/activity";
 import { useSchedule } from "../hooks/useSchedule";
+import { useDateObj } from "../hooks/useDateObj";
 
-const changeFormatDate = (lista) => {
-  return lista.map((item) => ({
-    ...item,
-    start: new Date(item.start),
-    end: new Date(item.end),
-  }));
-};
 
 const ActivityContext = createContext();
 
 export const ActivityProvider = ({ children }) => {
+  
+  const {updateSingleDate, createNewDate,  deleteOneDate, deleteAllDates, getAllDates } = useDateObj();
+  const { currentScheduleKey } = useSchedule();
 
-  const { authSchedule } = useSchedule();
-  const [scheduleElements, setScheduleElements] = useState([]); // lista con el estado de las actividades que pertenecen a un calendario
+
+  const [activities, setActivities] = useState([]); // lista con el estado de las actividades que pertenecen a un calendario
+
+  // Este use Effect que se ejecuta al cargar el provider hace que se haga la consulta sin datos,
+  useEffect(() => {
+    if (currentScheduleKey === undefined) return; //Si es undefinido no haga nada
+    console.log('authSchedule', currentScheduleKey);
+    getActivities();
+  }, [currentScheduleKey]);
+
+  useEffect(() => {
+    console.log('activities', activities);
+  }, [activities])
+
+  const addDateIdsToActivities = async (activitiesList) => {
+    try {
+      const updatedActivities = await activitiesList.map(async (activity) => {
+        console.log('activity', activity);
+        //const allDates = await getAllDates(activity._id);
+        if (allDates.length > 0) {
+          const dateModelIDs = await allDates.map((day) => ({ dateModelID: day._id }));
+          return { ...activity, daysList: dateModelIDs };
+        } else {
+          return { ...activity };
+        }
+
+      });
+      setActivities(updatedActivities); //guardar la actividad con todos sus datos actualizados
+    } catch (error) {
+      console.log("Error when adding date IDs to activities");
+    }
+  };
 
   const getActivities = async () => {
     try {
-      const userActivity = await fetchActivities(authSchedule._id); // consultar sobre cual auth debe usarse aqui
-      setScheduleElements(userActivity);
+      const userActivities = await fetchActivities(currentScheduleKey); // consultar sobre cual auth debe usarse aqui
+      // agregar los ids de las fechas a usar 
+      //await addDateIdsToActivities(userActivities);
+      setActivities(userActivities);
     } catch (error) {
       console.log("Error when getting activities");
     }
   };
 
-  // Este use Effect que se ejecuta al cargar el provider hace que se haga la consulta sin datos,
-  useEffect(() => {
-    if(authSchedule === undefined) return; //Si es undefinido no haga nada
-    console.log('authSchedule', authSchedule);
-     getActivities();
-  }, [authSchedule]);
-  
 
   const addActivity = async (newActivity) => {
     try {
-      const activityCreated = await createActivity(authSchedule._id, newActivity);
+      const activityCreated = await createActivity(currentScheduleKey, newActivity);
+      console.log('activityCreated', activityCreated)
       if (activityCreated) {
         getActivities();
       }
@@ -52,15 +75,15 @@ export const ActivityProvider = ({ children }) => {
 
   const editActivity = async (updatedActivity) => {
     try {
-      const data = await updateActivity(authSchedule._id, updatedActivity);
+      const data = await updateActivity(currentScheduleKey, updatedActivity);
       console.log(data["activity"]);
       if (data) {
-        const updatedActivities = scheduleElements.map((schedule) =>
+        const updatedActivities = activities.map((schedule) =>
           schedule["_id"] === data["activity"]["_id"]
             ? data["activity"]
             : schedule
         );
-        setScheduleElements(updatedActivities);
+        setActivities(updatedActivities);
       }
     } catch (error) {
       console.log("Error when updating activity");
@@ -69,13 +92,13 @@ export const ActivityProvider = ({ children }) => {
 
   const deleteActivity = async (activityId) => {
     try {
-      const data = await removeActivity(activityId, authSchedule._id);
+      const data = await removeActivity(activityId, currentScheduleKey);
 
       if (data) {
-        const filteredActivities = scheduleElements.filter(
+        const filteredActivities = activities.filter(
           (schedule) => schedule["_id"] !== activityId
         );
-        setScheduleElements(filteredActivities);
+        setActivities(filteredActivities);
       }
     } catch (error) {
       console.log("Error when deleting activity");
@@ -85,10 +108,11 @@ export const ActivityProvider = ({ children }) => {
   return (
     <ActivityContext.Provider
       value={{
-        scheduleElements,
+        activities,
         addActivity,
         editActivity,
         deleteActivity,
+        getActivities,
       }}
     >
       {children}
