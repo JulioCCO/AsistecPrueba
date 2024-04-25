@@ -9,10 +9,13 @@ const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
 
   // currentSchedule: identificador del horario actual.
   const { schedules, currentSchedule, addSchedule, editSchedule } = useSchedule();
-  const WIDTH = Dimensions.get("window").width - 80;
-  const HEIGHT = Dimensions.get("window").height - 660;
+  const WIDTH = Dimensions.get("window").width * 0.8;
+  const HEIGHT = (Dimensions.get("window").height * 0.2);
   const { auth } = useAuth();
   const [name, setName] = useState("");
+
+  const [onActiveError, setOnActiveError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     if (action == "edit") {
@@ -24,7 +27,14 @@ const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
     , []);
 
   const handleCreateSchedule = () => {
-
+    if (name === "") {
+      setErrorMsg("Ingrese un nombre.")
+      setOnActiveError(true);
+      return
+    } else {
+      setErrorMsg("")
+      setOnActiveError(false);
+    }
     if (action == "edit") {
       const schedule = {
         _id: currentSchedule,
@@ -67,6 +77,7 @@ const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
             onChange={(event) => setName(event.nativeEvent.text)}
             placeholderTextColor={"black"}
             inputContainerStyle={{ borderBottomWidth: 0 }}
+            errorMessage={onActiveError && errorMsg}
             style={{
               color: "black",
               borderBottomWidth: 2,

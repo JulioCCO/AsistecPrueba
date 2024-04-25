@@ -44,30 +44,6 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     }
   )
 
-  useEffect(() => {
-    if (action === "edit") {
-      if (selectedActivity !== undefined) {
-        console.log('CreateEditActivityModal: useEffect: selectedActivity', selectedActivity)
-        // llamar a funcion que se encargue de subir los datos de la actividad
-        setListOfDays(DayOfWeekList);
-      } else {
-        console.log('seleccione una actividad')
-      }
-    }
-    else if (action === "create") {
-      setListOfDays(DayOfWeekList);
-    }
-  }, [])
-
-  useEffect(() => {
-    console.log('\nformatedData', formatedData)
-    if (formatedData.title !== '') {
-
-      addActivity(formatedData);
-      console.log('\nformatedData enviada', formatedData)
-    }
-  }, [formatedData])
-
 
   // handler to show the initial datepicker
   const showInitialHourpicker = () => {
@@ -112,7 +88,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
       extra_descriptions: ["clases de mate"],
     },
   */
-  const onCreateActivity = () => {
+  const onCreateActivity = async () => {
     handleCheckInputs();
     // se debe validar que los campos obligatorios no este vacios
     // Tambien se debe validar que la hora inicial no sea mayor o igual a la hora final
@@ -131,8 +107,9 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
       daysList: [],
       scheduleId: currentScheduleKey,
     }
-    setFormatedData(obj)
-
+    setFormatedData(obj);
+    console.log('obj', obj);
+    await addActivity(obj);
     setModalVisible(!modalVisible);
 
   }
@@ -153,6 +130,30 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     setListOfDays(updatedListOfDays);
   }
 
+  useEffect(() => {
+    if (action === "edit") {
+      if (selectedActivity !== undefined) {
+        console.log('CreateEditActivityModal: useEffect: selectedActivity', selectedActivity)
+        // llamar a funcion que se encargue de subir los datos de la actividad
+        setListOfDays(DayOfWeekList);
+      } else {
+        console.log('seleccione una actividad')
+      }
+    }
+    else if (action === "create") {
+      setListOfDays(DayOfWeekList);
+    }
+  }, [])
+
+  /*
+  useEffect(() => {
+    console.log('\nformatedData', formatedData)
+    if (formatedData.title !== '') {
+      addActivity(formatedData);
+      console.log('\nformatedData enviada', formatedData)
+    }
+  }, [modalVisible])
+*/
   return (
     <TouchableOpacity
       disabled={true}

@@ -3,6 +3,7 @@ import { SERVER_HOST_DIR } from "@env"
 
 export const createActivity = async (ScheduleId, activity) => {
     try {
+        console.log(`createActivity: ${SERVER_HOST_DIR}/api/activity/registerActivity/${ScheduleId}`, activity)
         const { data } = await axios.post(`${SERVER_HOST_DIR}/api/activity/registerActivity/${ScheduleId}`, activity);
         return(data);
     } catch (error) {

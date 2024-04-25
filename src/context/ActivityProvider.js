@@ -12,8 +12,8 @@ import { useDateObj } from "../hooks/useDateObj";
 const ActivityContext = createContext();
 
 export const ActivityProvider = ({ children }) => {
-  
-  const {updateSingleDate, createNewDate,  deleteOneDate, deleteAllDates, getAllDates } = useDateObj();
+
+  const { updateSingleDate, createNewDate, deleteOneDate, deleteAllDates, getAllDates } = useDateObj();
   const { currentScheduleKey } = useSchedule();
 
 
@@ -65,7 +65,7 @@ export const ActivityProvider = ({ children }) => {
     try {
       const activityCreated = await createActivity(currentScheduleKey, newActivity);
       console.log('activityCreated', activityCreated)
-      if (activityCreated) {
+      if (activityCreated !== undefined) {
         getActivities();
       }
     } catch (error) {
