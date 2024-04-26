@@ -8,12 +8,13 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert
 import DayOfWeekList from '../../../helpers/weekDays.js';
 import { useSchedule } from "../../../hooks/useSchedule.js";
 import { useActivity } from '../../../hooks/useActivity.js';
-
+import { useDateObj } from '../../../hooks/useDateObj.js';
 
 const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, selectedActivity }) => {
 
   const { currentSchedule, currentScheduleKey } = useSchedule();
   const { addActivity } = useActivity();
+  const { createNewDate } = useDateObj();
 
   const WIDTH = Dimensions.get("window").width * 0.8;
   const HEIGHT = (Dimensions.get("window").height * 0.6) + 100;
@@ -31,11 +32,11 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
   const [finalHour, setFinalHour] = useState(undefined);
 
   // Guarda el dia o dias seleccionados, en el que se debe mostrar dicha actividad
-  const [selectedDays, setSelectedDays] = useState([]);
   const [listOfdays, setListOfDays] = useState([]);
 
   const [formatedData, setFormatedData] = useState(
     {
+      id: '',
       title: '',
       location: '',
       description: '',
@@ -104,10 +105,11 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
         scheduleId: currentScheduleKey,
       }
       setFormatedData(obj);
-      console.log('obj', obj);
       const data = await addActivity(obj);
-      console.log("backend request data", data);
-      //handleFormattedDataToDateModel(selectedDays, initialHour, finalHour)
+
+      const onlySelectedDays = listOfdays.filter(day => day.isSelected === true);
+      console.log('selectedDays', onlySelectedDays);
+      handleFormattedDataToDateModel(onlySelectedDays, initialHour, finalHour, data)
       setModalVisible(!modalVisible);
     }
 
@@ -188,8 +190,6 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
   const validationDaySelected = () => {
     let validation = false;
     const onlySelectedDays = listOfdays.filter(day => day.isSelected === true);
-    setSelectedDays(onlySelectedDays);
-
     if (onlySelectedDays.length === 0) {
       let text = "Seleccione al menos un día."
       console.log(text);
@@ -226,6 +226,17 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
   };
 
   const handleFormattedDataToDateModel = (daysList, iniDate, finDate, activityId) => {
+    // Verificar si daysList tiene datos válidos
+    if (!Array.isArray(daysList) || daysList.length === 0) {
+      console.log('La lista de días está vacía o no es válida');
+      return;
+    }
+
+    // Verificar si iniDate y finDate son objetos Date válidos
+    if (!(iniDate instanceof Date) || !(finDate instanceof Date)) {
+      console.log('iniDate o finDate no son objetos Date válidos');
+      return;
+    }
 
     const initialHour = iniDate.getHours();
     const initialMinutes = iniDate.getMinutes();
@@ -233,8 +244,7 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
     const finalHour = finDate.getHours();
     const finalMinutes = finDate.getMinutes();
     const dateObjList = daysList.map((dayToParse) => {
-      return dateObj =
-      {
+      return {
         day: dayToParse.day,
         initialHour: initialHour,
         initialMinute: initialMinutes,
@@ -243,7 +253,11 @@ const CreateEditActivityModal = ({ modalVisible, setModalVisible, action, select
         activityID: activityId,
       }
     });
-    console.log('dateObjList', dateObjList);
+    console.log('\ndateObjList', dateObjList);
+    dateObjList.map(async (dateObj) => {
+      await createNewDate(activityId, dateObj);
+    });
+
   }
 
   useEffect(() => {

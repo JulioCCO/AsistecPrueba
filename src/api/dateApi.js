@@ -13,7 +13,7 @@ export const createDate = async (activityId, dateObj) => {
     }
 }
 
-export const getAllSchudaleDates = async (activityId) => {
+export const getAllActivityDates = async (activityId) => {
     try {
         const { data } =
             await axios.get(`${SERVER_HOST_DIR}/api/date/getAllDatesModels/${activityId}`)

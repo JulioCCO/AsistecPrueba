@@ -3,11 +3,11 @@ import { SERVER_HOST_DIR } from "@env"
 
 export const createActivity = async (ScheduleId, activity) => {
     try {
-        console.log(`createActivity: ${SERVER_HOST_DIR}/api/activity/registerActivity/${ScheduleId}`, activity)
+        console.log(`\ncreateActivity: ${SERVER_HOST_DIR}/api/activity/registerActivity/${ScheduleId}`, activity)
         const { data } = await axios.post(`${SERVER_HOST_DIR}/api/activity/registerActivity/${ScheduleId}`, activity);
-        return(data);
+        return data;
     } catch (error) {
-        if(error.response) {
+        if (error.response) {
             alert(error.response?.data.msg);
         }
     }
@@ -16,9 +16,9 @@ export const createActivity = async (ScheduleId, activity) => {
 export const fetchActivities = async (ScheduleId) => {
     try {
         const { data } = await axios.get(`${SERVER_HOST_DIR}/api/activity/getActivities/${ScheduleId}`);
-        return(data);
+        return (data);
     } catch (error) {
-        if(error.response) {
+        if (error.response) {
             alert(error.response?.data.msg);
         }
     }
@@ -27,9 +27,9 @@ export const fetchActivities = async (ScheduleId) => {
 export const updateActivity = async (ScheduleId, updatedActivity) => {
     try {
         const { data } = await axios.put(`${SERVER_HOST_DIR}/api/activity/updateActivity/${ScheduleId}`, updatedActivity);
-        return(data);
+        return (data);
     } catch (error) {
-        if(error.response) {
+        if (error.response) {
             alert(error.response?.data.msg);
         }
     }
@@ -38,9 +38,9 @@ export const updateActivity = async (ScheduleId, updatedActivity) => {
 export const removeActivity = async (activityId, ScheduleId) => {
     try {
         const { data } = await axios.delete(`${SERVER_HOST_DIR}/api/activity/deleteActivity/${ScheduleId}/${activityId}`);
-        return(data);
+        return (data);
     } catch (error) {
-        if(error.response) {
+        if (error.response) {
             alert(error.response?.data.msg);
         }
     }

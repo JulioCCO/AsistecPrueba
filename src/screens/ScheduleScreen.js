@@ -13,13 +13,15 @@ import TimeTableView, { genTimeBlock } from 'react-native-timetable';
 import CreateEditScheduleModal from "../components/Schedule/CreateEdit/CreateEditScheduleModal";
 import CreateEditActivityModal from "../components/Schedule/CreateEdit/CreateEditActivityModal";
 import { useSchedule } from "../hooks/useSchedule";
-
+import { useActivity } from "../hooks/useActivity";
 
 const ScheduleScreen = () => {
 
   const { schedules, currentScheduleKey, setCurrentScheduleKey,
     deleteSchedule, currentScheduleData, setCurrentScheduleData
   } = useSchedule(); //Custom hook
+  const { activities } = useActivity();
+
 
   {/* Estados de horarios*/ }
   const [modalVisible, setModalVisible] = useState(false); //estado para abrir el model de crear horario
@@ -38,16 +40,37 @@ const ScheduleScreen = () => {
   const [onAcceptDeleteActivity, setOnAcceptDeleteActivity] = useState(false) // bandera que se activa cuando se acepta el modal de confirmacion para eliminiar actividad
   const [editActivityFlag, setEditActivityFlag] = useState(false);
 
+  const [formatedData, setFormatedData] = useState(
+    {
+      id: '',
+      title: '',
+      location: '',
+      description: '',
+      daysList: [],
+      scheduleId: '',
+    }
+  )
+
+  useEffect(() => {
+    console.log('actividades dentro de ScheduleScreen', activities)
+    //handleFormattedActivities()
+  }, [])
+
 
   useEffect(() => {
     if (deleteActivityFlag === true) {
       // Agregar funcion para eliminar la actividad
       // Tomar en cuenta que se debe elevar un modal para confirmar eliminar
       console.log('delete flag true');
-      
+
     }
   }, [deleteActivityFlag])
 
+  const handleFormattedActivities = () => {
+    activities.map((activity) => {
+
+    })
+  }
   const events_data = [
     {
       title: "Math",
@@ -65,8 +88,8 @@ const ScheduleScreen = () => {
     },
     {
       title: "Physics",
-      startTime: genTimeBlock("MON", 11),
-      endTime: genTimeBlock("MON", 11, 50),
+      startTime: genTimeBlock("MON", 9),
+      endTime: genTimeBlock("MON", 11, 40),
       location: "Lab 404",
       extra_descriptions: ["Einstein"],
     },

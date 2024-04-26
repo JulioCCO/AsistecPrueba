@@ -7,6 +7,7 @@ import {
 } from "../api/activity";
 import { useSchedule } from "../hooks/useSchedule";
 import { useDateObj } from "../hooks/useDateObj";
+import { disableExpoCliLogging } from "expo/build/logs/Logs";
 
 
 const ActivityContext = createContext();
@@ -27,23 +28,25 @@ export const ActivityProvider = ({ children }) => {
   }, [currentScheduleKey]);
 
   useEffect(() => {
-    console.log('activities', activities);
+    console.log('\nactivities', activities, '\n');
   }, [activities])
 
   const addDateIdsToActivities = async (activitiesList) => {
     try {
-      const updatedActivities = await activitiesList.map(async (activity) => {
+      const updatedActivities = await Promise.all(activitiesList.map(async (activity) => {
         console.log('activity', activity);
-        //const allDates = await getAllDates(activity._id);
+        const allDates = await getAllDates(activity._id);
+        console.log('allDates', allDates);
         if (allDates.length > 0) {
-          const dateModelIDs = await allDates.map((day) => ({ dateModelID: day._id }));
-          return { ...activity, daysList: dateModelIDs };
+          const dateModelIDs = allDates.map((day) => (day._id ));
+          console.log('dateModelIDs', dateModelIDs)
+          return { ...activity, daysList:dateModelIDs };
         } else {
-          return { ...activity };
+          return activity; // Devuelve la actividad sin cambios si no hay fechas
         }
-
-      });
-      setActivities(updatedActivities); //guardar la actividad con todos sus datos actualizados
+      }));
+      console.log('updatedActivities', updatedActivities);
+      setActivities(updatedActivities); // guardar la actividad con todos sus datos actualizados
     } catch (error) {
       console.log("Error when adding date IDs to activities");
     }
@@ -52,9 +55,10 @@ export const ActivityProvider = ({ children }) => {
   const getActivities = async () => {
     try {
       const userActivities = await fetchActivities(currentScheduleKey); // consultar sobre cual auth debe usarse aqui
+      console.log('userActivities', userActivities);
       // agregar los ids de las fechas a usar 
-      //await addDateIdsToActivities(userActivities);
-      setActivities(userActivities);
+      await addDateIdsToActivities(userActivities);
+      //setActivities(userActivities);
     } catch (error) {
       console.log("Error when getting activities");
     }
@@ -64,9 +68,10 @@ export const ActivityProvider = ({ children }) => {
   const addActivity = async (newActivity) => {
     try {
       const activityCreated = await createActivity(currentScheduleKey, newActivity);
-      console.log('activityCreated', activityCreated)
       if (activityCreated !== undefined) {
         getActivities();
+        console.log('activityCreated.activity._id', activityCreated.activity._id)
+        return activityCreated.activity._id
       }
     } catch (error) {
       console.log("Error when adding activity");

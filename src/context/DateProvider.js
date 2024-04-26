@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import {
     createDate,
     updateDate,
-    getAllSchudaleDates,
+    getAllActivityDates,
     deleteOneDateByID,
     deleteAllSchudaleDates,
 } from '../api/dateApi';
@@ -16,7 +16,7 @@ export const DateProvider = ({ children }) => {
 
     const getAllDates = async (activityId) => {
         try {
-            const data = await getAllSchudaleDates(activityId);
+            const data = await getAllActivityDates(activityId);
             return data;
         } catch (error) {
             console.log('Error al obtener las fechas.', error);
