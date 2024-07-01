@@ -88,6 +88,7 @@ export const ScheduleProvider = ({ children }) => {
         );
         setschedules(filterData);
       }
+      setCurrentScheduleKey(null);
     } catch (error) {
       console.log("Error when deleting schedule");
     }

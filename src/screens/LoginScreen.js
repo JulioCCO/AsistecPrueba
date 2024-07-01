@@ -19,7 +19,7 @@ const LoginScreen = () => {
 
     // Use the useNavigation hook to get the navigation object
     const navigation = useNavigation();
-
+    
     const handleLogin = async () => {
         try {
             console.log('LoginScreen: handleLogin: SERVER_HOST_DIR', SERVER_HOST_DIR)

@@ -7,7 +7,6 @@ import {
 } from "../api/activity";
 import { useSchedule } from "../hooks/useSchedule";
 import { useDateObj } from "../hooks/useDateObj";
-import { disableExpoCliLogging } from "expo/build/logs/Logs";
 
 
 const ActivityContext = createContext();

@@ -8,7 +8,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from
 const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
 
   // currentSchedule: identificador del horario actual.
-  const { schedules, currentSchedule, addSchedule, editSchedule } = useSchedule();
+  const { schedules, currentScheduleKey, addSchedule, editSchedule,getSchedules } = useSchedule();
   const WIDTH = Dimensions.get("window").width * 0.8;
   const HEIGHT = (Dimensions.get("window").height * 0.2);
   const { auth } = useAuth();
@@ -20,7 +20,11 @@ const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
   useEffect(() => {
     if (action == "edit") {
       //buscar el name recorriendo el arreglo de schedules
-      const schedule = schedules.find((schedule) => schedule.key == currentSchedule);
+      console.log("schedule")
+      console.log(schedules)
+      console.log("currentSchedule: ", currentScheduleKey)
+
+      const schedule = schedules.find((sch) => sch.key == currentScheduleKey);
       setName(schedule.value);
     }
   }
@@ -37,7 +41,7 @@ const CreateEditScheduleModal = ({ modalVisible, setModalVisible, action }) => {
     }
     if (action == "edit") {
       const schedule = {
-        _id: currentSchedule,
+        _id: currentScheduleKey,
         name: name,
         userId: auth.userId,
       };

@@ -170,7 +170,6 @@ const ScheduleScreen = () => {
         text: "SI",
         onPress: () => {
           deleteSchedule(currentScheduleKey);
-          setCurrentScheduleKey(null);
         },
       },
       {
